@@ -1,6 +1,5 @@
 import 'package:bet_yaferaw/ReusableComponents/camera_scanner_information.dart';
 import 'package:flutter/material.dart';
-import 'package:search_widget/search_widget.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -60,7 +59,7 @@ class _HomeState extends State<Home> {
                     }),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.transparent),
-                  borderRadius: BorderRadius.circular(6.0),
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
             ),
