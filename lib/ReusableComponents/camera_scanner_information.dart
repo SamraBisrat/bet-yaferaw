@@ -11,7 +11,7 @@ class CameraScannerInformation extends StatelessWidget {
           color: Color(0xffC4C4C4).withOpacity(0.18),
           borderRadius: BorderRadius.circular(8)),
       child: SizedBox(
-        height: height / 5,
+        height: height / 6,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           ListTile(
               leading: Container(
