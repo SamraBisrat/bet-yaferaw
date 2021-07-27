@@ -1,3 +1,4 @@
+import 'package:bet_yaferaw/Components/SignupComponent/signup.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -99,10 +100,18 @@ class _LoginState extends State<Login> {
                           onPressed: () {},
                         ),
                         SizedBox(height: 30),
-                        Text(
-                          "Don't have an account? Signup".toUpperCase(),
-                          style: TextStyle(color: AppTheme.textSecondary),
-                          textAlign: TextAlign.center,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Signup()));
+                          },
+                          child: Text(
+                            "Don't have an account? Signup".toUpperCase(),
+                            style: TextStyle(color: AppTheme.textSecondary),
+                            textAlign: TextAlign.center,
+                          ),
                         )
                       ],
                     ),
