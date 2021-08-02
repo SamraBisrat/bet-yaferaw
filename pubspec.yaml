@@ -41,7 +41,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/images/
-  
+
   fonts:
     - family: SourceSansPro
       fonts:
@@ -51,8 +51,6 @@ flutter:
         - asset: assets/fonts/SourceSansPro-ExtraLight.ttf
         - asset: assets/fonts/SourceSansPro-Regular.ttf
         - asset: assets/fonts/SourceSansPro-SemiBold.ttf
-
-
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
