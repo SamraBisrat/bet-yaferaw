@@ -22,7 +22,8 @@ class _HomeState extends State<Home> {
     return Scaffold(
         extendBody: true,
         bottomNavigationBar: YRBottomNavigation(),
-        body: Container(
+        body: SingleChildScrollView(
+            child: Container(
           margin: MediaQuery.of(context).padding,
           color: Color(0xffF6F5F5),
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -184,6 +185,6 @@ class _HomeState extends State<Home> {
               )
             ],
           ),
-        ));
+        )));
   }
 }
