@@ -1,5 +1,6 @@
 import 'package:bet_yaferaw/Components/AddRecipeComponent/add_recipe.dart';
 import 'package:bet_yaferaw/Components/HomeComponent/home.dart';
+import 'package:bet_yaferaw/Components/ProfileComponent/profile.dart';
 import 'package:flutter/material.dart';
 
 class YRBottomNavigation extends StatefulWidget {
@@ -60,6 +61,8 @@ class _YRBottomNavigationState extends State<YRBottomNavigation> {
                     {
                       //
                       print(index);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Profile()));
                     }
                 }
               },

@@ -18,14 +18,13 @@ class _RecipeDetailState extends State<RecipeDetail> {
     return Scaffold(
         body: Container(
       color: Color(0xffF6F5F5),
-      margin: MediaQuery.of(context).padding,
       child: Column(
         children: [
           Container(
               height: height / 3,
               width: width,
               child: Image(
-                  image: AssetImage("assets/images/splashscreen.png"),
+                  image: AssetImage("assets/images/sample_food.jpeg"),
                   fit: BoxFit.cover)),
           Container(
             color: Color(0xffF6F5F5),
@@ -95,22 +94,33 @@ class _RecipeDetailState extends State<RecipeDetail> {
                     style: AppTheme.regularGreen,
                   ),
                 ]),
-                Wrap(children: [Text("")]),
-                ElevatedButton(
-                    onPressed: () {},
-                    child: Text("Done",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white)),
-                    style: ButtonStyle(
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                            EdgeInsets.fromLTRB(50, 20, 50, 20)),
-                        alignment: Alignment.center,
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            AppTheme.buttonSecondary),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)))))
+                SizedBox(height: 20),
+                Wrap(children: [
+                  Text(
+                      "The awesome thing about this meal is that it is cooked in just one pot. Only having to dirty one pot and deliver an amazing meal for the fam = one happy mama. Cook pasta: In a large pot cook the pasta in boiling water according to package directions. Drain and set aside. Cook the shrimp: Add the shrimp and salt and pepper to taste. Cook until the shrimp start to turn pink. Add italian seasoning and spinach and cook until wilted.")
+                ]),
+                SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("Done",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white)),
+                      style: ButtonStyle(
+                          padding:
+                              MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                  EdgeInsets.fromLTRB(50, 20, 50, 20)),
+                          alignment: Alignment.center,
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              AppTheme.buttonSecondary),
+                          shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8))))),
+                ),
               ],
             ),
           )
