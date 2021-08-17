@@ -1,3 +1,4 @@
+import 'package:bet_yaferaw/Components/HomeComponent/home.dart';
 import 'package:bet_yaferaw/Components/SignupComponent/signup.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
@@ -97,7 +98,12 @@ class _LoginState extends State<Login> {
                                       RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8)))),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Home()));
+                          },
                         ),
                         SizedBox(height: 30),
                         GestureDetector(

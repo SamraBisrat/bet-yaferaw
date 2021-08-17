@@ -1,8 +1,10 @@
+import 'package:bet_yaferaw/Components/RecipeDetailComponent/recipe_detail.dart';
 import 'package:bet_yaferaw/Provider/MasterProvider.dart';
 import 'package:bet_yaferaw/ReusableComponents/bottom_navigation.dart';
 import 'package:bet_yaferaw/ReusableComponents/camera_scanner_information.dart';
 import 'package:bet_yaferaw/ReusableComponents/recipe_short_description.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
@@ -91,13 +93,95 @@ class _HomeState extends State<Home> {
                 ),
               ),
               Container(
-                  child: RecipeShortDescription(
-                      image: "assets/images/splashscreen.png",
-                      recipeName: "spa",
-                      liked: masterProvider.getliked,
-                      likes: 20,
-                      cookTime: "20",
-                      serving: 2))
+                child: Expanded(
+                  flex: 1,
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RecipeDetail()));
+                        },
+                        child: CustomScrollView(
+                            shrinkWrap: true,
+                            slivers: <Widget>[
+                              SliverPadding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 0),
+                                sliver: SliverGrid.count(
+                                  childAspectRatio: 0.7,
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 5,
+                                  crossAxisSpacing: 5,
+                                  children: [
+                                    RecipeShortDescription(
+                                        image: "assets/images/sample_food.jpeg",
+                                        recipeName: "Spaghetti  Shrimp Sauce",
+                                        liked: masterProvider.getliked,
+                                        likes: 20,
+                                        cookTime: "20",
+                                        serving: 2),
+                                    RecipeShortDescription(
+                                        image: "assets/images/sample_food.jpeg",
+                                        recipeName: "Spaghetti  Shrimp Sauce",
+                                        liked: masterProvider.getliked,
+                                        likes: 20,
+                                        cookTime: "20",
+                                        serving: 2),
+                                    RecipeShortDescription(
+                                        image: "assets/images/sample_food.jpeg",
+                                        recipeName: "Spaghetti  Shrimp Sauce",
+                                        liked: masterProvider.getliked,
+                                        likes: 20,
+                                        cookTime: "20",
+                                        serving: 2),
+                                    RecipeShortDescription(
+                                        image: "assets/images/sample_food.jpeg",
+                                        recipeName: "Spaghetti  Shrimp Sauce",
+                                        liked: masterProvider.getliked,
+                                        likes: 20,
+                                        cookTime: "20",
+                                        serving: 2),
+                                    RecipeShortDescription(
+                                        image: "assets/images/sample_food.jpeg",
+                                        recipeName: "Spaghetti  Shrimp Sauce",
+                                        liked: masterProvider.getliked,
+                                        likes: 20,
+                                        cookTime: "20",
+                                        serving: 2),
+                                    RecipeShortDescription(
+                                        image: "assets/images/sample_food.jpeg",
+                                        recipeName: "Spaghetti  Shrimp Sauce",
+                                        liked: masterProvider.getliked,
+                                        likes: 20,
+                                        cookTime: "20",
+                                        serving: 2),
+                                    RecipeShortDescription(
+                                        image: "assets/images/sample_food.jpeg",
+                                        recipeName: "Spaghetti  Shrimp Sauce",
+                                        liked: masterProvider.getliked,
+                                        likes: 20,
+                                        cookTime: "20",
+                                        serving: 2),
+                                    RecipeShortDescription(
+                                        image: "assets/images/sample_food.jpeg",
+                                        recipeName: "Spaghetti  Shrimp Sauce",
+                                        liked: masterProvider.getliked,
+                                        likes: 20,
+                                        cookTime: "20",
+                                        serving: 2),
+                                  ],
+                                ),
+                              ),
+                            ]),
+                      )
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
         ));
