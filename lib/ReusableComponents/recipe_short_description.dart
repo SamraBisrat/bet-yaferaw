@@ -36,100 +36,104 @@ class _RecipeShortDescriptionState extends State<RecipeShortDescription> {
     return Center(
       child: ClipRRect(
           borderRadius: BorderRadius.circular(10.0),
-          child: Stack(
-            fit: StackFit.loose,
-            children: [
-              Image.asset(
-                widget.image,
-                fit: BoxFit.fitWidth,
-                width: width,
-              ),
-              Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      decoration: BoxDecoration(
-                          color: Color(0xff282727).withOpacity(0.70),
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(12))),
-                      height: height / 8,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  widget.recipeName == null
-                                      ? ""
-                                      : widget.recipeName,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: AppTheme.fontName,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+          child: Stack(fit: StackFit.loose, children: [
+            Image.asset(
+              widget.image,
+              fit: BoxFit.fitWidth,
+              width: width,
+            ),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  decoration: BoxDecoration(
+                      color: Color(0xff282727).withOpacity(0.70),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12))),
+                  height: height / 8,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: ListView(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        widget.recipeName == null
+                                            ? ""
+                                            : widget.recipeName,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: AppTheme.fontName,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                    Column(children: [
+                                      Consumer<MasterProvider>(
+                                          builder: ((context, provider, child) {
+                                        return GestureDetector(
+                                          child: provider.getliked
+                                              ? Icon(
+                                                  Icons.favorite_sharp,
+                                                  color: Color(0xffFD6637),
+                                                )
+                                              : Icon(
+                                                  Icons.favorite_outline_sharp,
+                                                  color: Color(0xffFD6637),
+                                                ),
+                                          onTap: () {
+                                            provider.checkIfFavorite(
+                                                provider.getliked);
+                                          },
+                                        );
+                                      })),
+                                      Text(
+                                        widget.likes.toString(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    ]),
+                                  ],
                                 ),
-                              ),
-                              Column(children: [
-                                Consumer<MasterProvider>(
-                                    builder: ((context, provider, child) {
-                                  return GestureDetector(
-                                    child: provider.getliked
-                                        ? Icon(
-                                            Icons.favorite_sharp,
-                                            color: Color(0xffFD6637),
-                                          )
-                                        : Icon(
-                                            Icons.favorite_outline_sharp,
-                                            color: Color(0xffFD6637),
-                                          ),
-                                    onTap: () {
-                                      provider
-                                          .checkIfFavorite(provider.getliked);
-                                    },
-                                  );
-                                })),
-                                Text(
-                                  widget.likes.toString(),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "${widget.cookTime} mins",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Container(
+                                        height: 12,
+                                        child: VerticalDivider(
+                                          thickness: 2,
+                                          color: Colors.white,
+                                        )),
+                                    Text(
+                                      "${widget.serving} Servings",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
                                 )
                               ]),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                "${widget.cookTime} mins",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Container(
-                                  height: 12,
-                                  child: VerticalDivider(
-                                    thickness: 2,
-                                    color: Colors.white,
-                                  )),
-                              Text(
-                                "${widget.serving} Servings",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ))),
-            ],
-          )),
+                        )
+                      ]),
+                ))
+          ])),
     );
 
     // rows.add(Padding(
