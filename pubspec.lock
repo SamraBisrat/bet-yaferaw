@@ -57,6 +57,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
+  flushbar:
+    dependency: "direct main"
+    description:
+      name: flushbar
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.10.4"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -177,6 +184,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.0"
+  textfield_tags:
+    dependency: "direct main"
+    description:
+      name: textfield_tags
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.2"
   typed_data:
     dependency: transitive
     description:
