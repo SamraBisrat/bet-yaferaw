@@ -1,10 +1,14 @@
 import 'package:bet_yaferaw/Components/HomeComponent/home.dart';
 import 'package:bet_yaferaw/Components/SignupComponent/signup.dart';
+import 'package:bet_yaferaw/Provider/MasterProvider.dart';
+import 'package:bet_yaferaw/Service/http_calls.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -12,8 +16,13 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    MasterProvider masterProvider =
+        Provider.of<MasterProvider>(context, listen: false);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -53,6 +62,7 @@ class _LoginState extends State<Login> {
                         ),
                         SizedBox(height: 30.0),
                         TextField(
+                          controller: emailController,
                           decoration: InputDecoration(
                               hintText: 'Email',
                               prefixIcon: Padding(
@@ -68,6 +78,7 @@ class _LoginState extends State<Login> {
                         ),
                         SizedBox(height: 30.0),
                         TextField(
+                          controller: passwordController,
                           obscureText: true,
                           decoration: InputDecoration(
                               hintText: 'password',
@@ -83,28 +94,49 @@ class _LoginState extends State<Login> {
                                       BorderSide(color: AppTheme.lightGrey))),
                         ),
                         SizedBox(height: 100),
-                        ElevatedButton(
-                          child: Text(
-                            "Login",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          style: ButtonStyle(
-                              padding: MaterialStateProperty.all<EdgeInsets>(
-                                  EdgeInsets.all(20)),
-                              alignment: Alignment.center,
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  AppTheme.buttonSecondary),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8)))),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Home()));
-                          },
-                        ),
+                        Consumer<MasterProvider>(
+                            builder: ((context, provider, child) {
+                          return provider.getLoading
+                              ? CircularProgressIndicator()
+                              : ElevatedButton(
+                                  child: Text(
+                                    "Login",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  style: ButtonStyle(
+                                      padding:
+                                          MaterialStateProperty.all<EdgeInsets>(
+                                              EdgeInsets.all(20)),
+                                      alignment: Alignment.center,
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              AppTheme.buttonSecondary),
+                                      shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8)))),
+                                  onPressed: () async {
+                                    provider.setLoading = true;
+                                    int code = await HttpCalls.login(
+                                        emailController.text,
+                                        passwordController.text,
+                                        masterProvider);
+                                    provider.setLoading = false;
+
+                                    if (code == 200) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Home()));
+                                    } else {
+                                      print(code);
+                                      provider.setLoading = false;
+                                      print("error $code");
+                                    }
+                                  },
+                                );
+                        })),
                         SizedBox(height: 30),
                         GestureDetector(
                           onTap: () {
