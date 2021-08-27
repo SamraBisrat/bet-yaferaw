@@ -1,8 +1,11 @@
 import 'package:bet_yaferaw/Components/LoginComponent/login.dart';
+import 'package:bet_yaferaw/Provider/MasterProvider.dart';
+import 'package:bet_yaferaw/Service/http_calls.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -10,8 +13,16 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  TextEditingController firstName = TextEditingController();
+  TextEditingController lastName = TextEditingController();
+  TextEditingController emailAddress = TextEditingController();
+  TextEditingController enterPassword = TextEditingController();
+  TextEditingController reEnterPassword = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    MasterProvider masterProvider =
+        Provider.of<MasterProvider>(context, listen: false);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -54,8 +65,9 @@ class _SignupState extends State<Signup> {
                         ),
                         SizedBox(height: 30.0),
                         TextField(
+                          controller: firstName,
                           decoration: InputDecoration(
-                              hintText: 'Enter your full name'.toUpperCase(),
+                              hintText: 'Enter your first name'.toUpperCase(),
                               prefixIcon: Padding(
                                 padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
                                 child: Icon(
@@ -69,6 +81,23 @@ class _SignupState extends State<Signup> {
                         ),
                         SizedBox(height: 30.0),
                         TextField(
+                          controller: lastName,
+                          decoration: InputDecoration(
+                              hintText: 'Enter your last name'.toUpperCase(),
+                              prefixIcon: Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
+                                child: Icon(
+                                  Icons.person,
+                                  color: AppTheme.lightGrey,
+                                ),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: AppTheme.lightGrey))),
+                        ),
+                        SizedBox(height: 30.0),
+                        TextField(
+                          controller: emailAddress,
                           decoration: InputDecoration(
                               hintText:
                                   'Enter your email address'.toUpperCase(),
@@ -85,6 +114,7 @@ class _SignupState extends State<Signup> {
                         ),
                         SizedBox(height: 30.0),
                         TextField(
+                          controller: enterPassword,
                           obscureText: true,
                           decoration: InputDecoration(
                               hintText: 'Enter your password'.toUpperCase(),
@@ -101,6 +131,7 @@ class _SignupState extends State<Signup> {
                         ),
                         SizedBox(height: 30),
                         TextField(
+                          controller: reEnterPassword,
                           obscureText: true,
                           decoration: InputDecoration(
                               hintText: 'Re-enter your password'.toUpperCase(),
@@ -116,23 +147,53 @@ class _SignupState extends State<Signup> {
                                       BorderSide(color: AppTheme.lightGrey))),
                         ),
                         SizedBox(height: 50.0),
-                        ElevatedButton(
-                          child: Text(
-                            "Signup",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          style: ButtonStyle(
-                              padding: MaterialStateProperty.all<EdgeInsets>(
-                                  EdgeInsets.all(20)),
-                              alignment: Alignment.center,
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  AppTheme.buttonSecondary),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8)))),
-                          onPressed: () {},
-                        ),
+                        Consumer<MasterProvider>(
+                            builder: ((context, provider, child) {
+                          return provider.getLoading
+                              ? CircularProgressIndicator()
+                              : ElevatedButton(
+                                  child: Text(
+                                    "Signup",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  style: ButtonStyle(
+                                      padding:
+                                          MaterialStateProperty.all<EdgeInsets>(
+                                              EdgeInsets.all(20)),
+                                      alignment: Alignment.center,
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              AppTheme.buttonSecondary),
+                                      shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8)))),
+                                  onPressed: () async {
+                                    masterProvider.getUserData.firstname =
+                                        firstName.text;
+                                    masterProvider.getUserData.lastname =
+                                        lastName.text;
+                                    masterProvider.getUserData.email =
+                                        emailAddress.text;
+                                    masterProvider.getUserData.password =
+                                        enterPassword.text;
+                                    provider.setLoading = true;
+                                    int code = await HttpCalls.createUser(
+                                        masterProvider.getUserData,
+                                        masterProvider);
+                                    provider.setLoading = false;
+                                    if (code == 200) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Login()));
+                                    } else {
+                                      print("sign up $code");
+                                    }
+                                  },
+                                );
+                        })),
                         SizedBox(height: 30),
                         GestureDetector(
                           onTap: () {
