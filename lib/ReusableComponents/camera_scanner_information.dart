@@ -1,7 +1,60 @@
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 
-class CameraScannerInformation extends StatelessWidget {
+class CameraScannerInformation extends StatefulWidget {
+  @override
+  _CameraScannerInformationState createState() =>
+      _CameraScannerInformationState();
+}
+
+class _CameraScannerInformationState extends State<CameraScannerInformation> {
+  final ImagePicker _picker = ImagePicker();
+  File imageUrl;
+
+  Future pickImageFromCamera(BuildContext context) async {
+    XFile image = await _picker.pickImage(source: ImageSource.camera);
+
+    if (image != null) {
+      setState(() {
+        _cropImage(image);
+      });
+    }
+  }
+
+  Future<Null> _cropImage(XFile cropped) async {
+    // var img = Image.file(File(cropped.path));
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: cropped.path,
+        cropStyle: CropStyle.rectangle,
+        aspectRatioPresets: Platform.isAndroid
+            ? [
+                CropAspectRatioPreset.square,
+              ]
+            : [
+                CropAspectRatioPreset.square,
+              ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Color(0xff82B242),
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: true),
+        iosUiSettings: IOSUiSettings(
+          title: 'Cropper',
+        ));
+    if (croppedFile != null) {
+      imageUrl = croppedFile;
+
+      setState(() {
+        imageUrl = croppedFile;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -13,6 +66,7 @@ class CameraScannerInformation extends StatelessWidget {
       child: SizedBox(
         height: height / 6,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Container(child: imageUrl != null ? Image.file(imageUrl) : null),
           ListTile(
               leading: Container(
                 height: 70,
@@ -39,7 +93,7 @@ class CameraScannerInformation extends StatelessWidget {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                print("hellow");
+                                pickImageFromCamera(context);
                               }))),
               ])),
         ]),
