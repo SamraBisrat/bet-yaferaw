@@ -1,6 +1,7 @@
 import 'package:bet_yaferaw/Components/HomeComponent/home.dart';
 import 'package:bet_yaferaw/Components/SignupComponent/signup.dart';
 import 'package:bet_yaferaw/Provider/MasterProvider.dart';
+import 'package:bet_yaferaw/ReusableComponents/snack_bar.dart';
 import 'package:bet_yaferaw/Service/http_calls.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
@@ -122,17 +123,28 @@ class _LoginState extends State<Login> {
                                         emailController.text,
                                         passwordController.text,
                                         masterProvider);
+
                                     provider.setLoading = false;
 
                                     if (code == 200) {
+                                      print(passwordController.text);
+                                      print(emailController.text);
+                                      print(provider.getToken);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => Home()));
-                                    } else {
-                                      print(code);
+                                    } else if (code == 503) {
+                                      YRSnackBar(
+                                              title: "Please",
+                                              errorMessage:
+                                                  "Enter the correct password and email")
+                                          .showSnachkBar(context);
                                       provider.setLoading = false;
-                                      print("error $code");
+                                      print("error else if $code");
+                                    } else {
+                                      provider.setLoading = false;
+                                      print("error else $code");
                                     }
                                   },
                                 );
