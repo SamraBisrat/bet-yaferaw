@@ -14,7 +14,10 @@ class RecipeData {
       this.directions,
       this.ingredients,
       this.serves,
-      this.cookingtime});
+      this.cookingtime,
+      this.imageid,
+      this.userid,
+      this.usersliked});
 
   String id;
   List categories;
@@ -23,6 +26,9 @@ class RecipeData {
   List ingredients;
   int serves;
   String cookingtime;
+  String userid;
+  String imageid;
+  List usersliked;
 
   factory RecipeData.fromJson(Map<String, dynamic> json) => RecipeData(
       id: json["id"],
@@ -31,7 +37,10 @@ class RecipeData {
       directions: json["directions"],
       ingredients: json["ingredients"],
       serves: json["serves"],
-      cookingtime: json["cookingtime"]);
+      cookingtime: json["cookingtime"],
+      userid: json["userid"],
+      imageid: json["imageid"],
+      usersliked: json["usersliked"]);
 
   Map<String, dynamic> toJson() => {
         "categories": categories,
@@ -39,6 +48,9 @@ class RecipeData {
         "directions": directions,
         "ingredients": ingredients,
         "serves": serves,
-        "cookingtime": cookingtime
+        "cookingtime": cookingtime,
+        "userid": userid,
+        "imageid": imageid,
+        "usersliked": usersliked
       };
 }
