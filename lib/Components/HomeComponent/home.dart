@@ -5,7 +5,6 @@ import 'package:bet_yaferaw/ReusableComponents/camera_scanner_information.dart';
 import 'package:bet_yaferaw/ReusableComponents/recipe_short_description.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -16,8 +15,6 @@ class _HomeState extends State<Home> {
   TextEditingController _searchController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
-    MasterProvider masterProvider =
-        Provider.of<MasterProvider>(context, listen: false);
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
         extendBody: true,
@@ -117,56 +114,56 @@ class _HomeState extends State<Home> {
                         RecipeShortDescription(
                             image: "assets/images/sample_food.jpeg",
                             recipeName: "Spaghetti  Shrimp Sauce",
-                            liked: masterProvider.getliked,
+                            // liked: masterProvider.getliked,
                             likes: 20,
                             cookTime: "20",
                             serving: 2),
                         RecipeShortDescription(
                             image: "assets/images/sample_food.jpeg",
                             recipeName: "Spaghetti  Shrimp Sauce",
-                            liked: masterProvider.getliked,
+                            // liked: masterProvider.getliked,
                             likes: 20,
                             cookTime: "20",
                             serving: 2),
                         RecipeShortDescription(
                             image: "assets/images/sample_food.jpeg",
                             recipeName: "Spaghetti  Shrimp Sauce",
-                            liked: masterProvider.getliked,
+                            // liked: masterProvider.getliked,
                             likes: 20,
                             cookTime: "20",
                             serving: 2),
                         RecipeShortDescription(
                             image: "assets/images/sample_food.jpeg",
                             recipeName: "Spaghetti  Shrimp Sauce",
-                            liked: masterProvider.getliked,
+                            // liked: masterProvider.getliked,
                             likes: 20,
                             cookTime: "20",
                             serving: 2),
                         RecipeShortDescription(
                             image: "assets/images/sample_food.jpeg",
                             recipeName: "Spaghetti  Shrimp Sauce",
-                            liked: masterProvider.getliked,
+                            // liked: masterProvider.getliked,
                             likes: 20,
                             cookTime: "20",
                             serving: 2),
                         RecipeShortDescription(
                             image: "assets/images/sample_food.jpeg",
                             recipeName: "Spaghetti  Shrimp Sauce",
-                            liked: masterProvider.getliked,
+                            // liked: masterProvider.getliked,
                             likes: 20,
                             cookTime: "20",
                             serving: 2),
                         RecipeShortDescription(
                             image: "assets/images/sample_food.jpeg",
                             recipeName: "Spaghetti  Shrimp Sauce",
-                            liked: masterProvider.getliked,
+                            // liked: masterProvider.getliked,
                             likes: 20,
                             cookTime: "20",
                             serving: 2),
                         RecipeShortDescription(
                             image: "assets/images/sample_food.jpeg",
                             recipeName: "Spaghetti  Shrimp Sauce",
-                            liked: masterProvider.getliked,
+                            // liked: masterProvider.getliked,
                             likes: 20,
                             cookTime: "20",
                             serving: 2),

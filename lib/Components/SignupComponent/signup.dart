@@ -5,7 +5,6 @@ import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -21,8 +20,8 @@ class _SignupState extends State<Signup> {
 
   @override
   Widget build(BuildContext context) {
-    MasterProvider masterProvider =
-        Provider.of<MasterProvider>(context, listen: false);
+    // MasterProvider masterProvider =
+    //     Provider.of<MasterProvider>(context, listen: false);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -147,53 +146,51 @@ class _SignupState extends State<Signup> {
                                       BorderSide(color: AppTheme.lightGrey))),
                         ),
                         SizedBox(height: 50.0),
-                        Consumer<MasterProvider>(
-                            builder: ((context, provider, child) {
-                          return provider.getLoading
-                              ? CircularProgressIndicator()
-                              : ElevatedButton(
-                                  child: Text(
-                                    "Signup",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  style: ButtonStyle(
-                                      padding:
-                                          MaterialStateProperty.all<EdgeInsets>(
-                                              EdgeInsets.all(20)),
-                                      alignment: Alignment.center,
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              AppTheme.buttonSecondary),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8)))),
-                                  onPressed: () async {
-                                    masterProvider.getUserData.firstname =
-                                        firstName.text;
-                                    masterProvider.getUserData.lastname =
-                                        lastName.text;
-                                    masterProvider.getUserData.email =
-                                        emailAddress.text;
-                                    masterProvider.getUserData.password =
-                                        enterPassword.text;
-                                    provider.setLoading = true;
-                                    int code = await HttpCalls.createUser(
-                                        masterProvider.getUserData,
-                                        masterProvider);
-                                    provider.setLoading = false;
-                                    if (code == 200) {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Login()));
-                                    } else {
-                                      print("sign up $code");
-                                    }
-                                  },
-                                );
-                        })),
+                        // Consumer<MasterProvider>(
+                        //     builder: ((context, provider, child) {
+                        //   return provider.getLoading
+                        // CircularProgressIndicator()
+                        ElevatedButton(
+                          child: Text(
+                            "Signup",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: ButtonStyle(
+                              padding: MaterialStateProperty.all<EdgeInsets>(
+                                  EdgeInsets.all(20)),
+                              alignment: Alignment.center,
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  AppTheme.buttonSecondary),
+                              shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)))),
+                          onPressed: () async {
+                            // masterProvider.getUserData.firstname =
+                            //     firstName.text;
+                            // masterProvider.getUserData.lastname =
+                            //     lastName.text;
+                            // masterProvider.getUserData.email =
+                            //     emailAddress.text;
+                            // masterProvider.getUserData.password =
+                            //     enterPassword.text;
+                            // provider.setLoading = true;
+                            // int code = await HttpCalls.createUser(
+                            //     masterProvider.getUserData,
+                            //     masterProvider);
+                            // provider.setLoading = false;
+                            //   if (code == 200) {
+                            //     Navigator.push(
+                            //         context,
+                            //         MaterialPageRoute(
+                            //             builder: (context) => Login()));
+                            //   } else {
+                            //     print("sign up $code");
+                            //   }
+                          },
+                          // );
+                          //})
+                        ),
                         SizedBox(height: 30),
                         GestureDetector(
                           onTap: () {
