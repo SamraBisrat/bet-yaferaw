@@ -3,7 +3,6 @@ import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 
 class RecipeShortDescription extends StatefulWidget {
   final String image;
@@ -80,24 +79,27 @@ class _RecipeShortDescriptionState extends State<RecipeShortDescription> {
                                       ),
                                     ),
                                     Column(children: [
-                                      Consumer<MasterProvider>(
-                                          builder: ((context, provider, child) {
-                                        return GestureDetector(
-                                          child: provider.getliked
-                                              ? Icon(
-                                                  Icons.favorite_sharp,
-                                                  color: Color(0xffFD6637),
-                                                )
-                                              : Icon(
-                                                  Icons.favorite_outline_sharp,
-                                                  color: Color(0xffFD6637),
-                                                ),
-                                          onTap: () {
-                                            provider.checkIfFavorite(
-                                                provider.getliked);
-                                          },
-                                        );
-                                      })),
+                                      // Consumer<MasterProvider>(
+                                      //     builder: ((context, provider, child) {
+                                      //   return GestureDetector(
+                                      //   child: provider.getliked
+                                      //       ? Icon(
+                                      //           Icons.favorite_sharp,
+                                      //           color: Color(0xffFD6637),
+                                      //         )
+                                      //       : Icon(
+                                      //           Icons.favorite_outline_sharp,
+                                      //           color: Color(0xffFD6637),
+                                      //         ),
+                                      //   onTap: () {
+                                      //     provider.checkIfFavorite(
+                                      //         provider.getliked);
+                                      //   },
+
+                                      //
+
+                                      //  )
+
                                       Text(
                                         widget.likes.toString(),
                                         style: TextStyle(

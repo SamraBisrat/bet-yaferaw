@@ -6,7 +6,6 @@ import 'package:bet_yaferaw/ReusableComponents/recipe_short_description.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -16,8 +15,8 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
-    MasterProvider masterProvider =
-        Provider.of<MasterProvider>(context, listen: false);
+    // MasterProvider masterProvider =
+    //     Provider.of<MasterProvider>(context, listen: false);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -173,7 +172,7 @@ class _ProfileState extends State<Profile> {
                                                     "assets/images/sample_food.jpeg",
                                                 recipeName:
                                                     "Spaghetti  Shrimp Sauce",
-                                                liked: masterProvider.getliked,
+                                                // liked: masterProvider.getliked,
                                                 likes: 20,
                                                 cookTime: "20",
                                                 serving: 2),
@@ -182,7 +181,7 @@ class _ProfileState extends State<Profile> {
                                                     "assets/images/sample_food.jpeg",
                                                 recipeName:
                                                     "Spaghetti  Shrimp Sauce",
-                                                liked: masterProvider.getliked,
+                                                // liked: masterProvider.getliked,
                                                 likes: 20,
                                                 cookTime: "20",
                                                 serving: 2),
@@ -191,7 +190,7 @@ class _ProfileState extends State<Profile> {
                                                     "assets/images/sample_food.jpeg",
                                                 recipeName:
                                                     "Spaghetti  Shrimp Sauce",
-                                                liked: masterProvider.getliked,
+                                                // liked: masterProvider.getliked,
                                                 likes: 20,
                                                 cookTime: "20",
                                                 serving: 2),
@@ -200,7 +199,7 @@ class _ProfileState extends State<Profile> {
                                                     "assets/images/sample_food.jpeg",
                                                 recipeName:
                                                     "Spaghetti  Shrimp Sauce",
-                                                liked: masterProvider.getliked,
+                                                // liked: masterProvider.getliked,
                                                 likes: 20,
                                                 cookTime: "20",
                                                 serving: 2),
@@ -209,7 +208,7 @@ class _ProfileState extends State<Profile> {
                                                     "assets/images/sample_food.jpeg",
                                                 recipeName:
                                                     "Spaghetti  Shrimp Sauce",
-                                                liked: masterProvider.getliked,
+                                                // liked: masterProvider.getliked,
                                                 likes: 20,
                                                 cookTime: "20",
                                                 serving: 2),
@@ -218,7 +217,7 @@ class _ProfileState extends State<Profile> {
                                                     "assets/images/sample_food.jpeg",
                                                 recipeName:
                                                     "Spaghetti  Shrimp Sauce",
-                                                liked: masterProvider.getliked,
+                                                //    liked: masterProvider.getliked,
                                                 likes: 20,
                                                 cookTime: "20",
                                                 serving: 2),
@@ -227,7 +226,7 @@ class _ProfileState extends State<Profile> {
                                                     "assets/images/sample_food.jpeg",
                                                 recipeName:
                                                     "Spaghetti  Shrimp Sauce",
-                                                liked: masterProvider.getliked,
+                                                //      liked: masterProvider.getliked,
                                                 likes: 20,
                                                 cookTime: "20",
                                                 serving: 2),
@@ -236,7 +235,7 @@ class _ProfileState extends State<Profile> {
                                                     "assets/images/sample_food.jpeg",
                                                 recipeName:
                                                     "Spaghetti  Shrimp Sauce",
-                                                liked: masterProvider.getliked,
+                                                //       liked: masterProvider.getliked,
                                                 likes: 20,
                                                 cookTime: "20",
                                                 serving: 2),

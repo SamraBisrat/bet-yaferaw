@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:bet_yaferaw/Provider/MasterProvider.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+//import 'package:provider/provider.dart';
 
 class RecipeDetail extends StatefulWidget {
   @override
@@ -42,23 +42,26 @@ class _RecipeDetailState extends State<RecipeDetail> {
                       ),
                     ]),
                     Column(children: [
-                      Consumer<MasterProvider>(
-                          builder: ((context, provider, child) {
-                        return GestureDetector(
-                          child: provider.getliked
-                              ? Icon(
-                                  Icons.favorite_sharp,
-                                  color: Color(0xffFD6637),
-                                )
-                              : Icon(
-                                  Icons.favorite_outline_sharp,
-                                  color: Color(0xffFD6637),
-                                ),
-                          onTap: () {
-                            provider.checkIfFavorite(provider.getliked);
-                          },
-                        );
-                      })),
+                      // Consumer<MasterProvider>(
+                      //     builder: ((context, provider, child) {
+                      //   return
+
+                      GestureDetector(
+                          //   child: Icon(
+                          //           Icons.favorite_sharp,
+                          //           color: Color(0xffFD6637),
+                          //         )
+                          //       // : Icon(
+                          //       //     Icons.favorite_outline_sharp,
+                          //       //     color: Color(0xffFD6637),
+                          //         ),
+                          //   onTap: () {
+                          //     provider.checkIfFavorite(provider.getliked);
+                          //   },
+                          // );
+                          //}
+                          //)
+                          ),
                       Text(
                         '20',
                         style: TextStyle(
