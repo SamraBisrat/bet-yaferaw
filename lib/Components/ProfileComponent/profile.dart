@@ -147,6 +147,7 @@ class _ProfileState extends State<Profile> {
                         ),
                         SizedBox(
                           child: TabBar(
+                            indicatorColor: AppTheme.primaryColor,
                             tabs: [
                               Tab(
                                   icon: Icon(

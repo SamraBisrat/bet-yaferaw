@@ -2,8 +2,10 @@ import 'package:bet_yaferaw/Components/RecipeDetailComponent/recipe_detail.dart'
 import 'package:bet_yaferaw/ReusableComponents/bottom_navigation.dart';
 import 'package:bet_yaferaw/ReusableComponents/camera_scanner_information.dart';
 import 'package:bet_yaferaw/ReusableComponents/recipe_short_description.dart';
+import 'package:bet_yaferaw/ReusableComponents/snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:textfield_tags/textfield_tags.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -12,6 +14,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   TextEditingController _searchController = new TextEditingController();
+  List<String> ingredients = [];
   @override
   Widget build(BuildContext context) {
     // MasterProvider masterProvider =
@@ -50,35 +53,86 @@ class _HomeState extends State<Home> {
                 ),
               ),
               Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child: TextFormField(
-                    cursorColor: Color(0xff07110A),
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      disabledBorder: InputBorder.none,
-                      fillColor: Color(0xffC4C4C4).withOpacity(0.18),
-                      filled: true,
-                      // labelText: "Search",
-                      hintText: "Search Recipes",
-                      hintStyle: TextStyle(color: Color(0xff9586A8)),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: Color(0xff07110A),
+                padding: EdgeInsets.only(top: 20),
+                child: TextFieldTags(
+                  tagsStyler: TagsStyler(
+                    showHashtag: false,
+                    tagMargin: const EdgeInsets.only(right: 4.0),
+                    tagCancelIcon:
+                        Icon(Icons.cancel, size: 18.0, color: Colors.white),
+                    tagCancelIconPadding: EdgeInsets.only(left: 4.0, top: 2.0),
+                    tagPadding: EdgeInsets.only(
+                        top: 2.0, bottom: 4.0, left: 8.0, right: 4.0),
+                    tagDecoration: BoxDecoration(
+                      color: Colors.orange,
+                      border: Border.all(
+                        color: Colors.grey.shade300,
                       ),
-                      suffixIcon: IconButton(
-                          icon: Icon(Icons.clear, color: Color(0xff07110A)),
-                          onPressed: () {
-                            _searchController.clear();
-                          }),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.circular(18.0),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(20.0),
                       ),
                     ),
-                  )),
+                    tagTextStyle: TextStyle(
+                        fontWeight: FontWeight.normal, color: Colors.white),
+                    tagTextPadding: EdgeInsets.all(4),
+                  ),
+                  textFieldStyler: TextFieldStyler(
+                      cursorColor: Color(0xff07110A),
+                      textFieldFilledColor: Color(0xffC4C4C4).withOpacity(0.18),
+                      hintText: "Search Ingredients",
+                      isDense: true,
+                      textFieldEnabledBorder: InputBorder.none,
+                      textFieldFilled: true,
+                      textFieldFocusedBorder: InputBorder.none,
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
+                  onDelete: (tag) {
+                    ingredients.remove(tag);
+                  },
+                  onTag: (tag) {
+                    if ((ingredients.singleWhere((it) => it == tag,
+                            orElse: () => null)) !=
+                        null) {
+                      print('Already exists!');
+                      YRSnackBar(
+                              title: "Ingredient Already Exists",
+                              errorMessage:
+                                  "Please enter a different ingredient.")
+                          .showSnachkBar(context);
+                    } else {
+                      ingredients.add(tag);
+                    }
+                  },
+                ),
+                // TextFormField(
+                //   cursorColor: Color(0xff07110A),
+                //   controller: _searchController,
+                //   decoration: InputDecoration(
+                //     focusedBorder: InputBorder.none,
+                //     enabledBorder: InputBorder.none,
+                //     errorBorder: InputBorder.none,
+                //     disabledBorder: InputBorder.none,
+                //     fillColor: Color(0xffC4C4C4).withOpacity(0.18),
+                //     filled: true,
+                //     // labelText: "Search",
+                //     hintText: "Search Recipes",
+                //     hintStyle: TextStyle(color: Color(0xff9586A8)),
+                //     prefixIcon: Icon(
+                //       Icons.search,
+                //       color: Color(0xff07110A),
+                //     ),
+                // suffixIcon: IconButton(
+                //     icon: Icon(Icons.clear, color: Color(0xff07110A)),
+                //     onPressed: () {
+                //       _searchController.clear();
+                //     }),
+                //     border: OutlineInputBorder(
+                //       borderSide: BorderSide(color: Colors.transparent),
+                //       borderRadius: BorderRadius.circular(18.0),
+                //     ),
+                //   ),
+                // )
+              ),
               Padding(
                 padding: EdgeInsets.only(top: 20),
                 child: CameraScannerInformation(),

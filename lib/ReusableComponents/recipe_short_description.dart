@@ -102,6 +102,28 @@ class _RecipeShortDescriptionState extends State<RecipeShortDescription> {
                                 ),
                               )
                             ]),
+                            GestureDetector(
+                              child:
+                                  // provider.getliked
+                                  //     ? Icon(
+                                  // Icons.bookmark_outlined,
+                                  //         color: Color(0xffFD6637),
+                                  //       )
+                                  //     :
+                                  Align(
+                                heightFactor: 1.5,
+                                alignment: Alignment.topCenter,
+                                child: Icon(
+                                  Icons.bookmark,
+                                  color: Color(0xffFD6637),
+                                ),
+                              ),
+                              onTap: () {
+                                // provider.checkIfFavorite(provider.getliked);
+                              },
+                              //   );
+                              // })
+                            ),
                           ],
                         ),
                         Row(
