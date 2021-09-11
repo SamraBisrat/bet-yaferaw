@@ -1,5 +1,4 @@
 import 'package:bet_yaferaw/Components/RecipeDetailComponent/recipe_detail.dart';
-import 'package:bet_yaferaw/Provider/MasterProvider.dart';
 import 'package:bet_yaferaw/ReusableComponents/bottom_navigation.dart';
 import 'package:bet_yaferaw/ReusableComponents/camera_scanner_information.dart';
 import 'package:bet_yaferaw/ReusableComponents/recipe_short_description.dart';
@@ -15,8 +14,12 @@ class _HomeState extends State<Home> {
   TextEditingController _searchController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
+    // MasterProvider masterProvider =
+    //     Provider.of<MasterProvider>(context, listen: false);
+    // double height = MediaQuery.of(context).size.height;
+
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         extendBody: true,
         bottomNavigationBar: YRBottomNavigation(),
         body: SingleChildScrollView(
@@ -102,75 +105,83 @@ class _HomeState extends State<Home> {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => RecipeDetail()));
                 },
-                child: CustomScrollView(shrinkWrap: true, slivers: <Widget>[
-                  SliverPadding(
-                    padding: EdgeInsets.symmetric(vertical: 2, horizontal: 0),
-                    sliver: SliverGrid.count(
-                      childAspectRatio: 0.7,
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 5,
-                      crossAxisSpacing: 5,
-                      children: [
-                        RecipeShortDescription(
-                            image: "assets/images/sample_food.jpeg",
-                            recipeName: "Spaghetti  Shrimp Sauce",
-                            // liked: masterProvider.getliked,
-                            likes: 20,
-                            cookTime: "20",
-                            serving: 2),
-                        RecipeShortDescription(
-                            image: "assets/images/sample_food.jpeg",
-                            recipeName: "Spaghetti  Shrimp Sauce",
-                            // liked: masterProvider.getliked,
-                            likes: 20,
-                            cookTime: "20",
-                            serving: 2),
-                        RecipeShortDescription(
-                            image: "assets/images/sample_food.jpeg",
-                            recipeName: "Spaghetti  Shrimp Sauce",
-                            // liked: masterProvider.getliked,
-                            likes: 20,
-                            cookTime: "20",
-                            serving: 2),
-                        RecipeShortDescription(
-                            image: "assets/images/sample_food.jpeg",
-                            recipeName: "Spaghetti  Shrimp Sauce",
-                            // liked: masterProvider.getliked,
-                            likes: 20,
-                            cookTime: "20",
-                            serving: 2),
-                        RecipeShortDescription(
-                            image: "assets/images/sample_food.jpeg",
-                            recipeName: "Spaghetti  Shrimp Sauce",
-                            // liked: masterProvider.getliked,
-                            likes: 20,
-                            cookTime: "20",
-                            serving: 2),
-                        RecipeShortDescription(
-                            image: "assets/images/sample_food.jpeg",
-                            recipeName: "Spaghetti  Shrimp Sauce",
-                            // liked: masterProvider.getliked,
-                            likes: 20,
-                            cookTime: "20",
-                            serving: 2),
-                        RecipeShortDescription(
-                            image: "assets/images/sample_food.jpeg",
-                            recipeName: "Spaghetti  Shrimp Sauce",
-                            // liked: masterProvider.getliked,
-                            likes: 20,
-                            cookTime: "20",
-                            serving: 2),
-                        RecipeShortDescription(
-                            image: "assets/images/sample_food.jpeg",
-                            recipeName: "Spaghetti  Shrimp Sauce",
-                            // liked: masterProvider.getliked,
-                            likes: 20,
-                            cookTime: "20",
-                            serving: 2),
-                      ],
-                    ),
-                  ),
-                ]),
+                child: CustomScrollView(
+                    // padding: EdgeInsets.only(bottom: bottom),
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    slivers: <Widget>[
+                      SliverPadding(
+                        padding: const EdgeInsets.only(
+                            bottom: 80.0, left: 0, right: 0, top: 5),
+
+                        // padding:
+                        //     EdgeInsets.symmetric(vertical: 2, horizontal: 0),
+                        sliver: SliverGrid.count(
+                          childAspectRatio: 0.7,
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 5,
+                          crossAxisSpacing: 5,
+                          children: [
+                            RecipeShortDescription(
+                                image: "assets/images/sample_food.jpeg",
+                                recipeName: "Spaghetti  Shrimp Sauce",
+                                liked: true,
+                                likes: 20,
+                                cookTime: "20",
+                                serving: 2),
+                            RecipeShortDescription(
+                                image: "assets/images/sample_food.jpeg",
+                                recipeName: "Spaghetti  Shrimp Sauce",
+                                liked: false,
+                                likes: 20,
+                                cookTime: "20",
+                                serving: 2),
+                            RecipeShortDescription(
+                                image: "assets/images/sample_food.jpeg",
+                                recipeName: "Spaghetti  Shrimp Sauce",
+                                liked: false,
+                                likes: 20,
+                                cookTime: "20",
+                                serving: 2),
+                            RecipeShortDescription(
+                                image: "assets/images/sample_food.jpeg",
+                                recipeName: "Spaghetti  Shrimp Sauce",
+                                liked: true,
+                                likes: 20,
+                                cookTime: "20",
+                                serving: 2),
+                            RecipeShortDescription(
+                                image: "assets/images/sample_food.jpeg",
+                                recipeName: "Spaghetti  Shrimp Sauce",
+                                liked: true,
+                                likes: 20,
+                                cookTime: "20",
+                                serving: 2),
+                            RecipeShortDescription(
+                                image: "assets/images/sample_food.jpeg",
+                                recipeName: "Spaghetti  Shrimp Sauce",
+                                liked: false,
+                                likes: 20,
+                                cookTime: "20",
+                                serving: 2),
+                            RecipeShortDescription(
+                                image: "assets/images/sample_food.jpeg",
+                                recipeName: "Spaghetti  Shrimp Sauce",
+                                liked: true,
+                                likes: 20,
+                                cookTime: "20",
+                                serving: 2),
+                            RecipeShortDescription(
+                                image: "assets/images/sample_food.jpeg",
+                                recipeName: "Spaghetti  Shrimp Sauce",
+                                liked: true,
+                                likes: 20,
+                                cookTime: "20",
+                                serving: 2),
+                          ],
+                        ),
+                      ),
+                    ]),
               )
                   //   ],
                   // ),

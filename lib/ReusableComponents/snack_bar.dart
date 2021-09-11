@@ -1,4 +1,4 @@
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 
 class YRSnackBar {
@@ -9,7 +9,7 @@ class YRSnackBar {
   void showSnachkBar(BuildContext context) {
     Flushbar(
       padding: EdgeInsets.all(20),
-      borderRadius: 8,
+      borderRadius: BorderRadius.circular(16),
       duration: Duration(seconds: 3),
       flushbarPosition: FlushbarPosition.TOP,
       backgroundGradient: errorMessage == null

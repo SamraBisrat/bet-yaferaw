@@ -19,18 +19,19 @@ class _ProfileState extends State<Profile> {
     //     Provider.of<MasterProvider>(context, listen: false);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-        bottomNavigationBar: YRBottomNavigation(),
-        body: Container(
-            color: AppTheme.primaryColor,
-            width: width,
-            height: height,
-            child: SingleChildScrollView(
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+            bottomNavigationBar: YRBottomNavigation(),
+            body: SingleChildScrollView(
+                child: Container(
+              color: AppTheme.primaryColor,
+              margin: MediaQuery.of(context).padding,
               child: Column(
                 children: [
                   Stack(children: [
                     Container(
-                      padding: const EdgeInsets.only(top: 30),
+                      // padding: const EdgeInsets.only(top: 30),
                       width: width,
                       height: height * 0.35,
                       decoration: BoxDecoration(
@@ -125,29 +126,54 @@ class _ProfileState extends State<Profile> {
                     ),
                   ]),
                   Container(
+                    height: height,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 20),
-                    width: width,
-                    height: height * 0.65,
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
                             topLeft: const Radius.circular(40),
-                            topRight: const Radius.circular(40))),
+                            topRight: const Radius.circular(40),
+                            bottomLeft: const Radius.circular(40),
+                            bottomRight: const Radius.circular(40))),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           "Posts",
                           style: AppTheme.header,
                           textAlign: TextAlign.left,
                         ),
-                        Expanded(
-                          flex: 1,
-                          child: ListView(
-                            shrinkWrap: true,
+                        SizedBox(
+                          child: TabBar(
+                            tabs: [
+                              Tab(
+                                  icon: Icon(
+                                    Icons.grid_on,
+                                    color: AppTheme.primaryColor,
+                                  ),
+                                  child: Text("Posted Recipes",
+                                      style: TextStyle(
+                                          color: AppTheme.primaryColor))),
+                              Tab(
+                                icon: Icon(
+                                  Icons.bookmark_border_sharp,
+                                  color: AppTheme.primaryColor,
+                                ),
+                                child: Text("Saved Recipes",
+                                    style: TextStyle(
+                                        color: AppTheme.primaryColor)),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Flexible(
+                          child: TabBarView(
                             children: [
-                              GestureDetector(
+                              Container(
+                                  // height: height,
+                                  child: GestureDetector(
                                 onTap: () {
                                   Navigator.push(
                                       context,
@@ -156,6 +182,7 @@ class _ProfileState extends State<Profile> {
                                               RecipeDetail()));
                                 },
                                 child: CustomScrollView(
+                                    physics: ScrollPhysics(),
                                     shrinkWrap: true,
                                     slivers: <Widget>[
                                       SliverPadding(
@@ -243,16 +270,59 @@ class _ProfileState extends State<Profile> {
                                         ),
                                       )
                                     ]),
-                              )
+                              )),
+                              Container(
+                                  // height: height,
+                                  child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              RecipeDetail()));
+                                },
+                                child: CustomScrollView(
+                                    physics: ScrollPhysics(),
+                                    shrinkWrap: true,
+                                    slivers: <Widget>[
+                                      SliverPadding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 2, horizontal: 0),
+                                        sliver: SliverGrid.count(
+                                          childAspectRatio: 0.7,
+                                          crossAxisCount: 2,
+                                          mainAxisSpacing: 5,
+                                          crossAxisSpacing: 5,
+                                          children: [
+                                            RecipeShortDescription(
+                                                image:
+                                                    "assets/images/sample_food.jpeg",
+                                                recipeName:
+                                                    "Spaghetti  Shrimp Sauce",
+                                                liked: true,
+                                                likes: 20,
+                                                cookTime: "20",
+                                                serving: 2),
+                                          ],
+                                        ),
+                                      )
+                                    ]),
+                              )),
                             ],
                           ),
-                        )
+                        ),
                       ],
                     ),
-                  ),
+                  )
                 ],
               ),
-            )));
+            )
+
+                //     ),
+                //   ),
+                // ],
+
+                )));
   }
 
   void choiceAction(String value) async {
