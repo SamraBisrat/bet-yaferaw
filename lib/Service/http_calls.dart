@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bet_yaferaw/Components/LoginComponent/bloc/login_event.dart';
 import 'package:bet_yaferaw/Model/recipe.dart';
 import 'package:bet_yaferaw/Model/user.dart';
 import 'package:bet_yaferaw/Provider/MasterProvider.dart';
@@ -44,7 +45,10 @@ class HttpCalls {
   // Put token in to header
   static Map<String, String> _getRequestHeader({String token = ""}) {
     if (token == "") {
-      return {"Content-type": "application/json", 'Charset': 'utf-8'};
+      return {
+        "Content-type": "application/json",
+        'Charset': 'utf-8',
+      };
     }
     return {
       "Content-type": "application/json",
@@ -52,8 +56,7 @@ class HttpCalls {
     };
   }
 
-  static Future<int> login(
-      String email, String password, MasterProvider masterProvider) async {
+  Future<String> login(String email, String password) async {
     return await http
         .post(Uri.parse(_baseUrl + _login),
             headers: _getRequestHeader(),
@@ -64,19 +67,17 @@ class HttpCalls {
       if (value.statusCode == 200) {
         var response = jsonDecode(value.body);
         var token = response["token"];
-        print(token);
         await SharedPref.storeToken(token.toString());
+        return token.toString();
       }
-      return value.statusCode;
+      return null;
     }).catchError((onError) {
-      print(onError.stackTrace);
-      handleOnError(onError, masterProvider);
-      return -1;
+      // handleOnError(onError);
+      return null;
     });
   }
 
-  static Future<int> createUser(
-      UserData userData, MasterProvider masterProvider) async {
+  Future<UserData> createUser(UserData userData) async {
     return await http
         .post(Uri.parse(_baseUrl + _createUser),
             headers: _getRequestHeader(), body: jsonEncode(userData.toJson()))
@@ -86,229 +87,229 @@ class HttpCalls {
         var response = jsonDecode(value.body);
         var id = response["id"];
         print(id.toString());
+        return response;
       }
-      return value.statusCode;
     }).catchError((onError) {
       print(onError);
-      handleOnError(onError, masterProvider);
-      return -1;
+      // handleOnError(onError, masterProvider);
+      return null;
     });
   }
 
-  static Future<int> createRecipe(
-      RecipeData recipeData, MasterProvider masterProvider, String id) async {
-    return await http
-        .post(Uri.parse(_baseUrl + _createRecipe + id),
-            headers: _getRequestHeader(token: masterProvider.getToken),
-            body: jsonEncode(recipeData.toJson()))
-        .then((value) async {
-      print(value.statusCode);
-      if (value.statusCode == 200) {
-        var response = jsonDecode(value.body);
-        recipeData = RecipeData.fromJson(response);
-        masterProvider.setRecipeData = recipeData;
-      }
+  // static Future<int> createRecipe(
+  //     RecipeData recipeData, MasterProvider masterProvider, String id) async {
+  //   return await http
+  //       .post(Uri.parse(_baseUrl + _createRecipe + id),
+  //           headers: _getRequestHeader(token: masterProvider.getToken),
+  //           body: jsonEncode(recipeData.toJson()))
+  //       .then((value) async {
+  //     print(value.statusCode);
+  //     if (value.statusCode == 200) {
+  //       var response = jsonDecode(value.body);
+  //       recipeData = RecipeData.fromJson(response);
+  //       masterProvider.setRecipeData = recipeData;
+  //     }
 
-      return value.statusCode;
-    }).catchError((onError) {
-      handleOnError(onError, masterProvider);
-      print(onError);
-      return -1;
-    });
-  }
+  //     return value.statusCode;
+  //   }).catchError((onError) {
+  //     handleOnError(onError, masterProvider);
+  //     print(onError);
+  //     return -1;
+  //   });
+  // }
 
-  static Future<int> getMyAccount(
-      UserData userData, MasterProvider masterProvider) async {
-    Map<String, dynamic> payload = JwtDecoder.decode(masterProvider.getToken);
-    String id = payload["id"];
+  // static Future<int> getMyAccount(
+  //     UserData userData, MasterProvider masterProvider) async {
+  //   Map<String, dynamic> payload = JwtDecoder.decode(masterProvider.getToken);
+  //   String id = payload["id"];
 
-    return await http
-        .get(Uri.parse(_baseUrl + _getUserById + id),
-            headers: _getRequestHeader(token: masterProvider.getToken))
-        .then((value) async {
-      if (value.statusCode == 200) {
-        var response = jsonDecode(value.body);
-        userData = UserData.fromJson(response);
-        masterProvider.setUserdata = userData;
-        await SharedPref.storeMyData(
-            "userData", json.encode(userData.toJson()));
-        print(userData.toJson());
-      }
-      return value.statusCode;
-    }).catchError((onError) {
-      handleOnError(onError, masterProvider);
-      print(onError);
-      return -1;
-    });
-  }
+  //   return await http
+  //       .get(Uri.parse(_baseUrl + _getUserById + id),
+  //           headers: _getRequestHeader(token: masterProvider.getToken))
+  //       .then((value) async {
+  //     if (value.statusCode == 200) {
+  //       var response = jsonDecode(value.body);
+  //       userData = UserData.fromJson(response);
+  //       masterProvider.setUserdata = userData;
+  //       await SharedPref.storeMyData(
+  //           "userData", json.encode(userData.toJson()));
+  //       print(userData.toJson());
+  //     }
+  //     return value.statusCode;
+  //   }).catchError((onError) {
+  //     handleOnError(onError, masterProvider);
+  //     print(onError);
+  //     return -1;
+  //   });
+  // }
 
-  Future<int> updateUser(
-      UserData userData, MasterProvider masterProvider) async {
-    Map<String, dynamic> payload = JwtDecoder.decode(masterProvider.getToken);
-    String id = payload["id"];
-    return await http
-        .patch(Uri.parse(_baseUrl + _updateUser + id),
-            headers: _getRequestHeader(token: masterProvider.getToken))
-        .then((value) async {
-      if (value.statusCode == 200) {
-        var response = jsonDecode(value.body);
-        userData = UserData.fromJson(response);
-        masterProvider.setUserdata = userData;
-        await SharedPref.storeMyData(
-            "userData", json.encode(userData.toJson()));
-        print(userData.toJson());
-      }
-      return value.statusCode;
-    }).catchError((onError) {
-      handleOnError(onError, masterProvider);
-      print(onError);
-      return -1;
-    });
-  }
+  // Future<int> updateUser(
+  //     UserData userData, MasterProvider masterProvider) async {
+  //   Map<String, dynamic> payload = JwtDecoder.decode(masterProvider.getToken);
+  //   String id = payload["id"];
+  //   return await http
+  //       .patch(Uri.parse(_baseUrl + _updateUser + id),
+  //           headers: _getRequestHeader(token: masterProvider.getToken))
+  //       .then((value) async {
+  //     if (value.statusCode == 200) {
+  //       var response = jsonDecode(value.body);
+  //       userData = UserData.fromJson(response);
+  //       masterProvider.setUserdata = userData;
+  //       await SharedPref.storeMyData(
+  //           "userData", json.encode(userData.toJson()));
+  //       print(userData.toJson());
+  //     }
+  //     return value.statusCode;
+  //   }).catchError((onError) {
+  //     handleOnError(onError, masterProvider);
+  //     print(onError);
+  //     return -1;
+  //   });
+  // }
 
-  Future<int> updateRecipe(RecipeData recipeData, MasterProvider masterProvider,
-      String recipeId) async {
-    return await http
-        .patch(Uri.parse(_baseUrl + _updateRecipe + recipeId),
-            headers: _getRequestHeader(token: masterProvider.getToken))
-        .then((value) async {
-      if (value.statusCode == 200) {
-        var response = jsonDecode(value.body);
-        recipeData = RecipeData.fromJson(response);
-        masterProvider.setRecipeData = recipeData;
-        print(recipeData.toJson());
-      }
-      return value.statusCode;
-    }).catchError((onError) {
-      handleOnError(onError, masterProvider);
-      print(onError);
-      return -1;
-    });
-  }
+  // Future<int> updateRecipe(RecipeData recipeData, MasterProvider masterProvider,
+  //     String recipeId) async {
+  //   return await http
+  //       .patch(Uri.parse(_baseUrl + _updateRecipe + recipeId),
+  //           headers: _getRequestHeader(token: masterProvider.getToken))
+  //       .then((value) async {
+  //     if (value.statusCode == 200) {
+  //       var response = jsonDecode(value.body);
+  //       recipeData = RecipeData.fromJson(response);
+  //       masterProvider.setRecipeData = recipeData;
+  //       print(recipeData.toJson());
+  //     }
+  //     return value.statusCode;
+  //   }).catchError((onError) {
+  //     handleOnError(onError, masterProvider);
+  //     print(onError);
+  //     return -1;
+  //   });
+  // }
 
-  static Future<int> getUsersById(
-      UserData userData, MasterProvider masterProvider, String id) async {
-    return await http
-        .get(Uri.parse(_baseUrl + _getUserById + id),
-            headers: _getRequestHeader(token: masterProvider.getToken))
-        .then((value) async {
-      if (value.statusCode == 200) {
-        var response = jsonDecode(value.body);
-        userData = UserData.fromJson(response);
-        masterProvider.setUserdata = userData;
-      }
-      return value.statusCode;
-    }).catchError((onError) {
-      handleOnError(onError, masterProvider);
-      print(onError);
-      return -1;
-    });
-  }
+  // static Future<int> getUsersById(
+  //     UserData userData, MasterProvider masterProvider, String id) async {
+  //   return await http
+  //       .get(Uri.parse(_baseUrl + _getUserById + id),
+  //           headers: _getRequestHeader(token: masterProvider.getToken))
+  //       .then((value) async {
+  //     if (value.statusCode == 200) {
+  //       var response = jsonDecode(value.body);
+  //       userData = UserData.fromJson(response);
+  //       masterProvider.setUserdata = userData;
+  //     }
+  //     return value.statusCode;
+  //   }).catchError((onError) {
+  //     handleOnError(onError, masterProvider);
+  //     print(onError);
+  //     return -1;
+  //   });
+  // }
 
-  Future<int> searchRecipe(RecipeData recipeData, MasterProvider masterProvider,
-      List ingredients) async {
-    return await http
-        .post(Uri.parse(_baseUrl + _searchRecipe),
-            headers: _getRequestHeader(),
-            body: jsonEncode({"keywords": ingredients}))
-        .then((value) async {
-      if (value.statusCode == 200) {
-        var response = jsonDecode(value.body);
-        recipeData = RecipeData.fromJson(response);
-        masterProvider.setRecipeData = recipeData;
-      }
-      return value.statusCode;
-    }).catchError((onError) {
-      handleOnError(onError, masterProvider);
-      print(onError);
-      return -1;
-    });
-  }
+  // Future<int> searchRecipe(RecipeData recipeData, MasterProvider masterProvider,
+  //     List ingredients) async {
+  //   return await http
+  //       .post(Uri.parse(_baseUrl + _searchRecipe),
+  //           headers: _getRequestHeader(),
+  //           body: jsonEncode({"keywords": ingredients}))
+  //       .then((value) async {
+  //     if (value.statusCode == 200) {
+  //       var response = jsonDecode(value.body);
+  //       recipeData = RecipeData.fromJson(response);
+  //       masterProvider.setRecipeData = recipeData;
+  //     }
+  //     return value.statusCode;
+  //   }).catchError((onError) {
+  //     handleOnError(onError, masterProvider);
+  //     print(onError);
+  //     return -1;
+  //   });
+  // }
 
-  static Future<int> getUsers(
-      UserData userData, MasterProvider masterProvider) async {
-    return await http
-        .get(Uri.parse(_baseUrl + _getUsers),
-            headers: _getRequestHeader(token: masterProvider.getToken))
-        .then((value) async {
-      if (value.statusCode == 200) {
-        var response = jsonDecode(value.body);
-        userData = UserData.fromJson(response);
-        masterProvider.setUserdata = userData;
-      }
-      return value.statusCode;
-    }).catchError((onError) {
-      handleOnError(onError, masterProvider);
-      print(onError);
-      return -1;
-    });
-  }
+  // static Future<int> getUsers(
+  //     UserData userData, MasterProvider masterProvider) async {
+  //   return await http
+  //       .get(Uri.parse(_baseUrl + _getUsers),
+  //           headers: _getRequestHeader(token: masterProvider.getToken))
+  //       .then((value) async {
+  //     if (value.statusCode == 200) {
+  //       var response = jsonDecode(value.body);
+  //       userData = UserData.fromJson(response);
+  //       masterProvider.setUserdata = userData;
+  //     }
+  //     return value.statusCode;
+  //   }).catchError((onError) {
+  //     handleOnError(onError, masterProvider);
+  //     print(onError);
+  //     return -1;
+  //   });
+  // }
 
-  static Future<int> getRecipes(
-      RecipeData recipeData, MasterProvider masterProvider) async {
-    return await http
-        .get(Uri.parse(_baseUrl + _getRecipes),
-            headers: _getRequestHeader(token: masterProvider.getToken))
-        .then((value) async {
-      if (value.statusCode == 200) {
-        var response = jsonDecode(value.body);
-        recipeData = RecipeData.fromJson(response);
-        masterProvider.setRecipeData = recipeData;
-      }
-      return value.statusCode;
-    }).catchError((onError) {
-      handleOnError(onError, masterProvider);
-      print(onError);
-      return -1;
-    });
-  }
+  // static Future<int> getRecipes(
+  //     RecipeData recipeData, MasterProvider masterProvider) async {
+  //   return await http
+  //       .get(Uri.parse(_baseUrl + _getRecipes),
+  //           headers: _getRequestHeader(token: masterProvider.getToken))
+  //       .then((value) async {
+  //     if (value.statusCode == 200) {
+  //       var response = jsonDecode(value.body);
+  //       recipeData = RecipeData.fromJson(response);
+  //       masterProvider.setRecipeData = recipeData;
+  //     }
+  //     return value.statusCode;
+  //   }).catchError((onError) {
+  //     handleOnError(onError, masterProvider);
+  //     print(onError);
+  //     return -1;
+  //   });
+  // }
 
-  static Future<int> getMyRecipes(
-      RecipeData recipeData, MasterProvider masterProvider, String id) async {
-    Map<String, dynamic> payload = JwtDecoder.decode(masterProvider.getToken);
-    String id = payload["id"];
-    return await http
-        .get(Uri.parse(_baseUrl + _getMyRecipes + id),
-            headers: _getRequestHeader(token: masterProvider.getToken))
-        .then((value) async {
-      if (value.statusCode == 200) {
-        var response = jsonDecode(value.body);
-        recipeData = RecipeData.fromJson(response);
-        masterProvider.setRecipeData = recipeData;
-      }
-      return value.statusCode;
-    }).catchError((onError) {
-      handleOnError(onError, masterProvider);
-      print(onError);
-      return -1;
-    });
-  }
+  // static Future<int> getMyRecipes(
+  //     RecipeData recipeData, MasterProvider masterProvider, String id) async {
+  //   Map<String, dynamic> payload = JwtDecoder.decode(masterProvider.getToken);
+  //   String id = payload["id"];
+  //   return await http
+  //       .get(Uri.parse(_baseUrl + _getMyRecipes + id),
+  //           headers: _getRequestHeader(token: masterProvider.getToken))
+  //       .then((value) async {
+  //     if (value.statusCode == 200) {
+  //       var response = jsonDecode(value.body);
+  //       recipeData = RecipeData.fromJson(response);
+  //       masterProvider.setRecipeData = recipeData;
+  //     }
+  //     return value.statusCode;
+  //   }).catchError((onError) {
+  //     handleOnError(onError, masterProvider);
+  //     print(onError);
+  //     return -1;
+  //   });
+  // }
 
-  static Future<int> getMySavedRecipes(
-      RecipeData recipeData, MasterProvider masterProvider, String id) async {
-    Map<String, dynamic> payload = JwtDecoder.decode(masterProvider.getToken);
-    String id = payload["id"];
-    return await http
-        .get(Uri.parse(_baseUrl + _getMySavedRecipes + id),
-            headers: _getRequestHeader(token: masterProvider.getToken))
-        .then((value) async {
-      if (value.statusCode == 200) {
-        var response = jsonDecode(value.body);
-        recipeData = RecipeData.fromJson(response);
-        masterProvider.setRecipeData = recipeData;
-      }
-      return value.statusCode;
-    }).catchError((onError) {
-      handleOnError(onError, masterProvider);
-      print(onError);
-      return -1;
-    });
-  }
+  // static Future<int> getMySavedRecipes(
+  //     RecipeData recipeData, MasterProvider masterProvider, String id) async {
+  //   Map<String, dynamic> payload = JwtDecoder.decode(masterProvider.getToken);
+  //   String id = payload["id"];
+  //   return await http
+  //       .get(Uri.parse(_baseUrl + _getMySavedRecipes + id),
+  //           headers: _getRequestHeader(token: masterProvider.getToken))
+  //       .then((value) async {
+  //     if (value.statusCode == 200) {
+  //       var response = jsonDecode(value.body);
+  //       recipeData = RecipeData.fromJson(response);
+  //       masterProvider.setRecipeData = recipeData;
+  //     }
+  //     return value.statusCode;
+  //   }).catchError((onError) {
+  //     handleOnError(onError, masterProvider);
+  //     print(onError);
+  //     return -1;
+  //   });
+  // }
 
-  static handleOnError(dynamic onError, MasterProvider masterProvider) {
+  static handleOnError(dynamic onError) {
     print(onError);
     if (onError is SocketException) {
-      masterProvider.setLoading = false;
+      // masterProvider.setLoading = false;
       Fluttertoast.showToast(
           msg: "You are offline, Please connect to the internet first!",
           toastLength: Toast.LENGTH_LONG,
