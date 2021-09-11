@@ -1,13 +1,19 @@
 import 'package:bet_yaferaw/Components/HomeComponent/home.dart';
+import 'package:bet_yaferaw/Components/LoginComponent/bloc/login_bloc.dart';
+import 'package:bet_yaferaw/Components/LoginComponent/bloc/login_event.dart';
+import 'package:bet_yaferaw/Components/LoginComponent/bloc/login_state.dart';
 import 'package:bet_yaferaw/Components/SignupComponent/signup.dart';
 import 'package:bet_yaferaw/Provider/MasterProvider.dart';
+import 'package:bet_yaferaw/Repositories/login_repo.dart';
 import 'package:bet_yaferaw/ReusableComponents/snack_bar.dart';
 import 'package:bet_yaferaw/Service/http_calls.dart';
+import 'package:bet_yaferaw/Service/shared_pref.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 class Login extends StatefulWidget {
@@ -18,9 +24,30 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+          child: BlocProvider(
+              create: (context) => LoginBloc(userRepository: UserRepository()),
+              child: BlocConsumer<LoginBloc, LoginState>(
+                  builder: buildForState,
+                  listener: (blocContext, blocState) async {
+                    if (blocState.tokenSaved == null) {
+                      print("is null");
+                    } else {
+                      if (blocState.tokenSaved == true) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Home()));
+                      } else if (blocState.tokenSaved == false) {
+                        YRSnackBar(errorMessage: "Unable to login");
+                      } else {}
+                    }
+                  }))),
+    );
+  }
+
+  Widget buildForState(blocContext, LoginState blocState) {
     // MasterProvider masterProvider =
     //     Provider.of<MasterProvider>(context, listen: false);
     double width = MediaQuery.of(context).size.width;
@@ -98,60 +125,38 @@ class _LoginState extends State<Login> {
                         //     builder: ((context, provider, child) {
                         // return provider.getLoading
                         //     ? CircularProgressIndicator()
-                        ElevatedButton(
-                            child: Text(
-                              "Login",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            style: ButtonStyle(
-                                padding: MaterialStateProperty.all<EdgeInsets>(
-                                    EdgeInsets.all(20)),
-                                alignment: Alignment.center,
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        AppTheme.buttonSecondary),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8)))),
-                            onPressed: () async {
-                              // provider.setLoading = true;
-                              // int code = await HttpCalls.login(
-                              //     emailController.text,
-                              //     passwordController.text,
-                              //     masterProvider);
 
-                              // provider.setLoading = false;
-
-                              //     if (code == 200) {
-                              //       print(passwordController.text);
-                              //       print(emailController.text);
-                              //       print(provider.getToken);
-                              //       Navigator.push(
-                              //           context,
-                              //           MaterialPageRoute(
-                              //               builder: (context) => Home()));
-                              //     } else if (code == 503) {
-                              //       YRSnackBar(
-                              //               title: "Please",
-                              //               errorMessage:
-                              //                   "Enter the correct password and email")
-                              //           .showSnachkBar(context);
-                              //       provider.setLoading = false;
-                              //       print("error else if $code");
-                              //     } else {
-                              //       provider.setLoading = false;
-                              //       print("error else $code");
-                              //     }
-                              //   },
-                              // );
-                            }),
+                        blocState.isLoading
+                            ? CircularProgressIndicator()
+                            : ElevatedButton(
+                                child: Text(
+                                  "Login",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                style: ButtonStyle(
+                                    padding:
+                                        MaterialStateProperty.all<EdgeInsets>(
+                                            EdgeInsets.all(20)),
+                                    alignment: Alignment.center,
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            AppTheme.buttonSecondary),
+                                    shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8)))),
+                                onPressed: () {
+                                  print("email ${emailController.text}");
+                                  BlocProvider.of<LoginBloc>(blocContext).add(
+                                      LoginButtonPressed(emailController.text,
+                                          passwordController.text));
+                                }),
                         SizedBox(height: 30),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
-                                context,
+                                blocContext,
                                 MaterialPageRoute(
                                     builder: (context) => Signup()));
                           },
