@@ -66,15 +66,20 @@ class _CameraScannerInformationState extends State<CameraScannerInformation> {
       child: SizedBox(
         height: height / 6,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Container(child: imageUrl != null ? Image.file(imageUrl) : null),
+          // Container(child: imageUrl != null ? Image.file(imageUrl) : null),
           ListTile(
-              leading: Container(
-                height: 70,
-                width: 70,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage("assets/images/image 4.png"),
-                        fit: BoxFit.cover)),
+              leading: GestureDetector(
+                onTap: () {
+                  pickImageFromCamera(context);
+                },
+                child: Container(
+                  height: 70,
+                  width: 70,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage("assets/images/image 4.png"),
+                          fit: BoxFit.cover)),
+                ),
               ),
               title: Wrap(children: [
                 Text('You have ingredients but you don’t know what to cook?',

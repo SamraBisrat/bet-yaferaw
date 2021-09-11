@@ -1,4 +1,4 @@
-import 'package:bet_yaferaw/Provider/MasterProvider.dart';
+// import 'package:bet_yaferaw/Provider/MasterProvider.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -54,84 +54,100 @@ class _RecipeShortDescriptionState extends State<RecipeShortDescription> {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Expanded(
-                          child: ListView(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        widget.recipeName == null
-                                            ? ""
-                                            : widget.recipeName,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: AppTheme.fontName,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ),
-                                    Column(children: [
-                                      // Consumer<MasterProvider>(
-                                      //     builder: ((context, provider, child) {
-                                      //   return GestureDetector(
-                                      //   child: provider.getliked
-                                      //       ? Icon(
-                                      //           Icons.favorite_sharp,
-                                      //           color: Color(0xffFD6637),
-                                      //         )
-                                      //       : Icon(
-                                      //           Icons.favorite_outline_sharp,
-                                      //           color: Color(0xffFD6637),
-                                      //         ),
-                                      //   onTap: () {
-                                      //     provider.checkIfFavorite(
-                                      //         provider.getliked);
-                                      //   },
-
-                                      //
-
-                                      //  )
-
-                                      Text(
-                                        widget.likes.toString(),
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    ]),
-                                  ],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                widget.recipeName == null
+                                    ? ""
+                                    : widget.recipeName,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: AppTheme.fontName,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
                                 ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "${widget.cookTime} mins",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    Container(
-                                        height: 12,
-                                        child: VerticalDivider(
-                                          thickness: 2,
-                                          color: Colors.white,
-                                        )),
-                                    Text(
-                                      "${widget.serving} Servings",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ]),
+                              ),
+                            ),
+                            Column(children: [
+                              // Consumer<MasterProvider>(
+                              //     builder: ((context, provider, child) {
+                              //   return
+
+                              GestureDetector(
+                                child:
+                                    // provider.getliked
+                                    //     ? Icon(
+                                    //         Icons.favorite_sharp,
+                                    //         color: Color(0xffFD6637),
+                                    //       )
+                                    //     :
+                                    Icon(
+                                  Icons.favorite_outline_sharp,
+                                  color: Color(0xffFD6637),
+                                ),
+                                onTap: () {
+                                  // provider.checkIfFavorite(provider.getliked);
+                                },
+                                //   );
+                                // })
+                              ),
+                              Text(
+                                widget.likes.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              )
+                            ]),
+                            GestureDetector(
+                              child:
+                                  // provider.getliked
+                                  //     ? Icon(
+                                  // Icons.bookmark_outlined,
+                                  //         color: Color(0xffFD6637),
+                                  //       )
+                                  //     :
+                                  Align(
+                                heightFactor: 1.5,
+                                alignment: Alignment.topCenter,
+                                child: Icon(
+                                  Icons.bookmark,
+                                  color: Color(0xffFD6637),
+                                ),
+                              ),
+                              onTap: () {
+                                // provider.checkIfFavorite(provider.getliked);
+                              },
+                              //   );
+                              // })
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                                child: Text(
+                              "${widget.cookTime} hours",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            )),
+                            Container(
+                                height: 12,
+                                child: VerticalDivider(
+                                  thickness: 2,
+                                  color: Colors.white,
+                                )),
+                            Text(
+                              "${widget.serving} Servings",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         )
                       ]),
                 ))

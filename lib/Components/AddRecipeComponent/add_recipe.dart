@@ -1,4 +1,6 @@
 import 'package:bet_yaferaw/ReusableComponents/bottom_navigation.dart';
+import 'package:bet_yaferaw/ReusableComponents/snack_bar.dart';
+import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
@@ -10,14 +12,7 @@ class AddRecipe extends StatefulWidget {
 }
 
 class _AddRecipeState extends State<AddRecipe> {
-  List<Ingredients> ingredients = [
-    Ingredients(ingredient: "onion"),
-    Ingredients(ingredient: "carrot"),
-    Ingredients(ingredient: "garlic"),
-  ];
-  List showIngredients = [];
-  Ingredients ing;
-  int selectedIndex = 1;
+  List<Ingredients> ingredients = [];
   String categoryController;
   String cookingController;
   String servingController;
@@ -25,7 +20,6 @@ class _AddRecipeState extends State<AddRecipe> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -65,13 +59,6 @@ class _AddRecipeState extends State<AddRecipe> {
                       )),
                 )
               ]),
-              // Card(
-              //     margin: EdgeInsets.symmetric(horizontal: 10),
-              //     elevation: 0,
-              //     clipBehavior: Clip.antiAlias,
-              //     child: Column(
-              //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //         children: [
               TextFormField(
                 decoration: InputDecoration(
                     enabledBorder: UnderlineInputBorder(
@@ -182,6 +169,7 @@ class _AddRecipeState extends State<AddRecipe> {
                         Container(
                             width: screenWidth / 2,
                             child: DropdownButtonFormField(
+                              itemHeight: 100,
                               menuMaxHeight: 100,
                               decoration:
                                   InputDecoration.collapsed(hintText: ""),
@@ -224,14 +212,7 @@ class _AddRecipeState extends State<AddRecipe> {
                           addIngredients(context),
                     ),
                   )),
-              // Container(
-              //     child: showIngredients.length == 0
-              //         ? Container()
-              //         :
               getIngredientList()
-
-              //  )
-              //c ]))
             ]))
           ])),
     );
@@ -244,7 +225,6 @@ class _AddRecipeState extends State<AddRecipe> {
             constraints: BoxConstraints(minWidth: 48),
             child: IntrinsicWidth(
               child: TextFieldTags(
-                //initialTags: ["better", "lovely"],
                 tagsStyler: TagsStyler(
                   showHashtag: false,
                   tagMargin: const EdgeInsets.only(right: 4.0),
@@ -279,16 +259,18 @@ class _AddRecipeState extends State<AddRecipe> {
                   ingredients.remove(tag);
                 },
                 onTag: (tag) {
-                  ingredients.add(Ingredients(ingredient: tag));
-
-                  // for (var ingredient in ingredients) {
-                  //   if (ingredients.length != 0) {
-                  //     showIngredients.add(ingredient.ingredient);
-                  //   }
-                  //   print(ingredient.ingredient);
-                  // }
-                  // showIngredients.add(ingredients);
-                  // print(showIngredients);
+                  if ((ingredients.singleWhere((it) => it.ingredient == tag,
+                          orElse: () => null)) !=
+                      null) {
+                    print('Already exists!');
+                    YRSnackBar(
+                            title: "Ingredient Already Exists",
+                            errorMessage:
+                                "Please enter a different ingredient.")
+                        .showSnachkBar(context);
+                  } else {
+                    ingredients.add(Ingredients(ingredient: tag));
+                  }
                 },
                 validator: (String tag) {
                   if (tag.length > 15) {
@@ -296,12 +278,24 @@ class _AddRecipeState extends State<AddRecipe> {
                   } else if (tag.isEmpty) {
                     return "enter something";
                   }
-
                   return null;
                 },
               ),
             )),
-        actions: <Widget>[Text('Add'), Text('Cancel')]);
+        actions: <Widget>[
+          ElevatedButton(
+              onPressed: () {
+                for (var element in ingredients) {
+                  print(element.ingredient);
+                }
+              },
+              child: Text('Add')),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'))
+        ]);
   }
 
   List<String> getList() {
@@ -315,36 +309,27 @@ class _AddRecipeState extends State<AddRecipe> {
   }
 
   Widget getIngredientList() {
-    List some = [];
-
     return ListView.builder(
+        physics: ScrollPhysics(),
         shrinkWrap: true,
         itemCount: ingredients.length,
         itemBuilder: (context, index) {
-          return Container(
-              height: 300, child: Text(ingredients[index].ingredient.toString())
-              // ListTile(
-              //     contentPadding:
-              //         EdgeInsets.symmetric(horizontal: 5, vertical: 0),
-              //     leading: Text(ingredient.toString()),
-              //     trailing: IconButton(
-              //       icon: Icon(Icons.close),
-              //       onPressed: () {
-              //         setState(() {
-              //           showIngredients.removeWhere(
-              //               (element) => element == ingredient);
-              //         });
-              //       },
-              //     ))
-
-              );
-          //   )
-          //   Divider(
-          //     color: Color(0xffC4C4C4),
-          //     thickness: 1,
-          //     height: 0,
-          //   ),
-          // ]));
+          return ListTile(
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                      style: BorderStyle.solid, color: Color(0xff0BCE83)),
+                  borderRadius: BorderRadius.circular(12.0)),
+              contentPadding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+              leading: Text(ingredients[index].ingredient.toString()),
+              trailing: IconButton(
+                icon: Icon(Icons.close, size: 16, color: AppTheme.primaryColor),
+                onPressed: () {
+                  setState(() {
+                    ingredients.removeWhere((element) =>
+                        element.ingredient == ingredients[index].ingredient);
+                  });
+                },
+              ));
         });
   }
 }
