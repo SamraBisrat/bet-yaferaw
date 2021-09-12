@@ -9,6 +9,7 @@ String recipeDataToJson(List<RecipeData> data) =>
 class RecipeData {
   RecipeData(
       {this.id,
+      this.intid,
       this.categories,
       this.recipename,
       this.directions,
@@ -20,6 +21,7 @@ class RecipeData {
       this.usersliked});
 
   String id;
+  int intid;
   List categories;
   String recipename;
   String directions;
@@ -32,6 +34,7 @@ class RecipeData {
 
   factory RecipeData.fromJson(Map<String, dynamic> json) => RecipeData(
       id: json["id"],
+      intid: json["intid"],
       categories: json["categories"],
       recipename: json["recipename"],
       directions: json["directions"],

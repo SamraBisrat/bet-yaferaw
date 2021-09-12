@@ -1,6 +1,8 @@
 import 'package:bet_yaferaw/Components/LoginComponent/login.dart';
 import 'package:bet_yaferaw/Components/SignupComponent/bloc/signup_bloc.dart';
+import 'package:bet_yaferaw/Components/SignupComponent/bloc/signup_event.dart';
 import 'package:bet_yaferaw/Components/SignupComponent/bloc/signup_state.dart';
+import 'package:bet_yaferaw/Model/user.dart';
 import 'package:bet_yaferaw/Repositories/login_repo.dart';
 import 'package:bet_yaferaw/Service/http_calls.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
@@ -159,47 +161,33 @@ class _SignupState extends State<Signup> {
                   //     builder: ((context, provider, child) {
                   //   return provider.getLoading
                   // CircularProgressIndicator()
-                  ElevatedButton(
-                    child: Text(
-                      "Signup",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    style: ButtonStyle(
-                        padding: MaterialStateProperty.all<EdgeInsets>(
-                            EdgeInsets.all(20)),
-                        alignment: Alignment.center,
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            AppTheme.buttonSecondary),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)))),
-                    onPressed: () async {
-                      // masterProvider.getUserData.firstname =
-                      //     firstName.text;
-                      // masterProvider.getUserData.lastname =
-                      //     lastName.text;
-                      // masterProvider.getUserData.email =
-                      //     emailAddress.text;
-                      // masterProvider.getUserData.password =
-                      //     enterPassword.text;
-                      // provider.setLoading = true;
-                      // int code = await HttpCalls.createUser(
-                      //     masterProvider.getUserData,
-                      //     masterProvider);
-                      // provider.setLoading = false;
-                      //   if (code == 200) {
-                      //     Navigator.push(
-                      //         context,
-                      //         MaterialPageRoute(
-                      //             builder: (context) => Login()));
-                      //   } else {
-                      //     print("sign up $code");
-                      //   }
-                    },
-                    // );
-                    //})
-                  ),
+                  blocState.isLoading
+                      ? CircularProgressIndicator()
+                      : ElevatedButton(
+                          child: Text(
+                            "Signup",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: ButtonStyle(
+                              padding: MaterialStateProperty.all<EdgeInsets>(
+                                  EdgeInsets.all(20)),
+                              alignment: Alignment.center,
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  AppTheme.buttonSecondary),
+                              shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)))),
+                          onPressed: () async {
+                            BlocProvider.of<SignupBloc>(blocContext).add(
+                                SignupButtonPressed(
+                                    userData: UserData(
+                                        firstname: firstName.text,
+                                        lastname: lastName.text,
+                                        email: emailAddress.text,
+                                        password: enterPassword.text)));
+                          },
+                        ),
                   SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {

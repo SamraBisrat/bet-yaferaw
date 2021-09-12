@@ -18,12 +18,15 @@ class SignupBloc extends Bloc<SignUpEvent, SignupState> {
     if (event is SignupButtonPressed) {
       yield state.copyWith(isLoading: true, userData: event.userData);
 
-      UserData userData = await userRepository.createUser(event.userData);
+      String response = await userRepository.createUser(event.userData);
+      print(response);
 
-      if (userData != null) {
+      if (response != null) {
+        print(response);
         yield state.copyWith(isLoading: false, userData: event.userData);
       } else {
-        yield state.copyWith(isLoading: false, exceptionError: "unable to signup");
+        yield state.copyWith(
+            isLoading: false, exceptionError: "unable to signup");
       }
     }
   }
