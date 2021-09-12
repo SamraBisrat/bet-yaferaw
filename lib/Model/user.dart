@@ -9,6 +9,7 @@ String userDataToJson(List<UserData> data) =>
 class UserData {
   UserData(
       {this.id,
+      this.intid,
       this.firstname,
       this.lastname,
       this.password,
@@ -19,17 +20,19 @@ class UserData {
       this.totallikes});
 
   String id;
+  int intid;
   String firstname;
   String lastname;
   String password;
   String email;
   String imageid;
-  List totallikes;
+  int totallikes;
   List recipescreated;
   List savedrecipes;
 
   factory UserData.fromJson(Map<String, dynamic> json) => UserData(
       id: json["id"],
+      intid: json["intid"],
       firstname: json["firstname"],
       lastname: json["lastname"],
       password: json["password"],
@@ -47,6 +50,6 @@ class UserData {
         "imageid": imageid,
         "totallikes": totallikes,
         "recipescreated": recipescreated,
-        "savedrecipes": savedrecipes
+        "savedrecipes": savedrecipes,
       };
 }

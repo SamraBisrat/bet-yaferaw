@@ -8,7 +8,7 @@ class SignupState extends Equatable {
   final String exceptionError;
 
   @override
-  List<Object> get props => [userData];
+  List<Object> get props => [userData, isLoading, exceptionError];
 
   SignupState copyWith({
     UserData userData,

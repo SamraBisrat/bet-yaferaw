@@ -7,6 +7,6 @@ class UserRepository {
   Future<String> login(String email, String password) =>
       _httpCalls.login(email, password);
 
-  Future<UserData> createUser(UserData userData) =>
+  Future<String> createUser(UserData userData) =>
       _httpCalls.createUser(userData);
 }

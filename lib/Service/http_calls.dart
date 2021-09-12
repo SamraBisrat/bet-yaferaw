@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:bet_yaferaw/Components/LoginComponent/bloc/login_event.dart';
+import 'package:bet_yaferaw/Components/LoginComponent/bloc/login_state.dart';
 import 'package:bet_yaferaw/Model/recipe.dart';
 import 'package:bet_yaferaw/Model/user.dart';
 import 'package:bet_yaferaw/Provider/MasterProvider.dart';
@@ -22,6 +23,7 @@ class HttpCalls {
   //Posts
   static const String _createUser = "/user";
   static const String _login = "/login";
+  static const String _myAccount = "/account";
   static const String _createRecipe = "/recipe";
 
   //Patch
@@ -56,6 +58,10 @@ class HttpCalls {
     };
   }
 
+  Future<String> getToken() async {
+    return await SharedPref.getToken();
+  }
+
   Future<String> login(String email, String password) async {
     return await http
         .post(Uri.parse(_baseUrl + _login),
@@ -77,7 +83,7 @@ class HttpCalls {
     });
   }
 
-  Future<UserData> createUser(UserData userData) async {
+  Future<String> createUser(UserData userData) async {
     return await http
         .post(Uri.parse(_baseUrl + _createUser),
             headers: _getRequestHeader(), body: jsonEncode(userData.toJson()))
@@ -87,7 +93,7 @@ class HttpCalls {
         var response = jsonDecode(value.body);
         var id = response["id"];
         print(id.toString());
-        return response;
+        return response.toString();
       }
     }).catchError((onError) {
       print(onError);
@@ -108,6 +114,7 @@ class HttpCalls {
   //       var response = jsonDecode(value.body);
   //       recipeData = RecipeData.fromJson(response);
   //       masterProvider.setRecipeData = recipeData;
+
   //     }
 
   //     return value.statusCode;
@@ -118,30 +125,26 @@ class HttpCalls {
   //   });
   // }
 
-  // static Future<int> getMyAccount(
-  //     UserData userData, MasterProvider masterProvider) async {
-  //   Map<String, dynamic> payload = JwtDecoder.decode(masterProvider.getToken);
-  //   String id = payload["id"];
-
-  //   return await http
-  //       .get(Uri.parse(_baseUrl + _getUserById + id),
-  //           headers: _getRequestHeader(token: masterProvider.getToken))
-  //       .then((value) async {
-  //     if (value.statusCode == 200) {
-  //       var response = jsonDecode(value.body);
-  //       userData = UserData.fromJson(response);
-  //       masterProvider.setUserdata = userData;
-  //       await SharedPref.storeMyData(
-  //           "userData", json.encode(userData.toJson()));
-  //       print(userData.toJson());
-  //     }
-  //     return value.statusCode;
-  //   }).catchError((onError) {
-  //     handleOnError(onError, masterProvider);
-  //     print(onError);
-  //     return -1;
-  //   });
-  // }
+  Future<UserData> getMyAccount(UserData userData) async {
+    return await http
+        .get(Uri.parse(_baseUrl + _myAccount),
+            headers: _getRequestHeader(token: await getToken()))
+        .then((value) async {
+      if (value.statusCode == 200) {
+        var response = jsonDecode(value.body);
+        userData = UserData.fromJson(response);
+        // masterProvider.setUserdata = userData;
+        await SharedPref.storeMyData(
+            "userData", json.encode(userData.toJson()));
+        print(userData.toJson());
+        return response;
+      }
+    }).catchError((onError) {
+      // handleOnError(onError, masterProvider);
+      print(onError);
+      return -1;
+    });
+  }
 
   // Future<int> updateUser(
   //     UserData userData, MasterProvider masterProvider) async {
@@ -206,25 +209,27 @@ class HttpCalls {
   //   });
   // }
 
-  // Future<int> searchRecipe(RecipeData recipeData, MasterProvider masterProvider,
-  //     List ingredients) async {
-  //   return await http
-  //       .post(Uri.parse(_baseUrl + _searchRecipe),
-  //           headers: _getRequestHeader(),
-  //           body: jsonEncode({"keywords": ingredients}))
-  //       .then((value) async {
-  //     if (value.statusCode == 200) {
-  //       var response = jsonDecode(value.body);
-  //       recipeData = RecipeData.fromJson(response);
-  //       masterProvider.setRecipeData = recipeData;
-  //     }
-  //     return value.statusCode;
-  //   }).catchError((onError) {
-  //     handleOnError(onError, masterProvider);
-  //     print(onError);
-  //     return -1;
-  //   });
-  // }
+  Future<List<RecipeData>> searchRecipe(List ingredients) async {
+    List recipeDatas = [];
+    return await http
+        .post(Uri.parse(_baseUrl + _searchRecipe),
+            headers: _getRequestHeader(),
+            body: jsonEncode({"keywords": ingredients}))
+        .then((value) async {
+      if (value.statusCode == 200) {
+        var response = jsonDecode(value.body);
+        for (var recipelists in response) {
+          recipeDatas.add(RecipeData.fromJson(recipelists));
+        }
+
+        return recipeDatas;
+      }
+    }).catchError((onError) {
+      // handleOnError(onError);
+      print(onError);
+      return null;
+    });
+  }
 
   // static Future<int> getUsers(
   //     UserData userData, MasterProvider masterProvider) async {
