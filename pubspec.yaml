@@ -30,7 +30,6 @@ dependencies:
   flutter_svg: ^0.22.0
   textfield_tags: ^1.4.2
   another_flushbar: ^1.10.24
-  bloc_test: ^7.0.1
   http: ^0.13.3
   shared_preferences: ^2.0.6
   fluttertoast: ^8.0.8
@@ -43,6 +42,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  bloc_test: ^7.0.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
