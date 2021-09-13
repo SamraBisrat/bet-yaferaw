@@ -34,11 +34,12 @@ class HttpCalls {
 
   //Gets
   static const String _getUserById = "/user/id";
-  static const String _getRecipeById = "/recipe/id";
+  static const String _getRecipeById = "/recipe/id?recipeid=";
   static const String _getUsers = "/get/users";
   static const String _getRecipes = "/get/recipes";
   static const String _getMyRecipes = "/recipes/userid";
   static const String _getMySavedRecipes = "/recipes/saved";
+  static const String _getExploreRecipe = "/get/explore/recipe";
 
   //Search
 
@@ -76,6 +77,8 @@ class HttpCalls {
         var response = jsonDecode(value.body);
         var token = response["token"];
         await SharedPref.storeToken(token.toString());
+        print("token in shared pref login");
+        print(await SharedPref.getToken());
         return token.toString();
       }
       return null;
@@ -97,6 +100,7 @@ class HttpCalls {
         print(id.toString());
         return response.toString();
       }
+      return null;
     }).catchError((onError) {
       print(onError);
       // handleOnError(onError, masterProvider);
@@ -138,24 +142,51 @@ class HttpCalls {
   //   });
   // }
 
-  Future<UserData> getMyAccount(UserData userData) async {
+  Future<RecipeData> getRecipeById(String id) async {
+    print(_baseUrl + _getRecipeById + id);
+    return await http
+        .get(Uri.parse(_baseUrl + _getRecipeById + id),
+            headers: _getRequestHeader())
+        .then((value) async {
+      print("header");
+      print(value.statusCode);
+      if (value.statusCode == 200) {
+        var response = jsonDecode(value.body);
+        RecipeData recipeData = RecipeData.fromJson(response);
+        print(recipeData);
+        return recipeData;
+      }
+      return null;
+    }).catchError((onError) {
+      print(onError);
+      return null;
+    });
+  }
+
+  Future<UserData> getMyAccount() async {
     return await http
         .get(Uri.parse(_baseUrl + _myAccount),
             headers: _getRequestHeader(token: await getToken()))
         .then((value) async {
+      print("header");
+      print(await getToken());
+
+      print(value.statusCode);
       if (value.statusCode == 200) {
         var response = jsonDecode(value.body);
-        userData = UserData.fromJson(response);
+        UserData userData = UserData.fromJson(response);
         // masterProvider.setUserdata = userData;
         await SharedPref.storeMyData(
             "userData", json.encode(userData.toJson()));
         print(userData.toJson());
-        return response;
+
+        return userData;
       }
+      return null;
     }).catchError((onError) {
       // handleOnError(onError, masterProvider);
       print(onError);
-      return -1;
+      return null;
     });
   }
 
@@ -223,7 +254,7 @@ class HttpCalls {
   // }
 
   Future<List<RecipeData>> searchRecipe(List ingredients) async {
-    List recipeDatas = [];
+    List<RecipeData> recipeDatas = [];
     return await http
         .post(Uri.parse(_baseUrl + _searchRecipe),
             headers: _getRequestHeader(),
@@ -237,6 +268,7 @@ class HttpCalls {
 
         return recipeDatas;
       }
+      return null;
     }).catchError((onError) {
       // handleOnError(onError);
       print(onError);
@@ -244,6 +276,27 @@ class HttpCalls {
     });
   }
 
+  Future<List<RecipeData>> getExploreRecipe() async {
+    List<RecipeData> exploredRecipes = [];
+    return await http
+        .get(Uri.parse(_baseUrl + _getExploreRecipe),
+            headers: _getRequestHeader())
+        .then((value) async {
+      if (value.statusCode == 200) {
+        var response = jsonDecode(value.body);
+        for (var recipelists in response) {
+          exploredRecipes.add(RecipeData.fromJson(recipelists));
+        }
+        print(exploredRecipes);
+        return exploredRecipes;
+      }
+      return null;
+    }).catchError((onError) {
+      // handleOnError(onError);
+      print(onError);
+      return null;
+    });
+  }
   // static Future<int> getUsers(
   //     UserData userData, MasterProvider masterProvider) async {
   //   return await http
@@ -282,47 +335,47 @@ class HttpCalls {
   //   });
   // }
 
-  // static Future<int> getMyRecipes(
-  //     RecipeData recipeData, MasterProvider masterProvider, String id) async {
-  //   Map<String, dynamic> payload = JwtDecoder.decode(masterProvider.getToken);
-  //   String id = payload["id"];
-  //   return await http
-  //       .get(Uri.parse(_baseUrl + _getMyRecipes + id),
-  //           headers: _getRequestHeader(token: masterProvider.getToken))
-  //       .then((value) async {
-  //     if (value.statusCode == 200) {
-  //       var response = jsonDecode(value.body);
-  //       recipeData = RecipeData.fromJson(response);
-  //       masterProvider.setRecipeData = recipeData;
-  //     }
-  //     return value.statusCode;
-  //   }).catchError((onError) {
-  //     handleOnError(onError, masterProvider);
-  //     print(onError);
-  //     return -1;
-  //   });
-  // }
+  Future<List<RecipeData>> getMyRecipes() async {
+    List<RecipeData> myRecipes = [];
 
-  // static Future<int> getMySavedRecipes(
-  //     RecipeData recipeData, MasterProvider masterProvider, String id) async {
-  //   Map<String, dynamic> payload = JwtDecoder.decode(masterProvider.getToken);
-  //   String id = payload["id"];
-  //   return await http
-  //       .get(Uri.parse(_baseUrl + _getMySavedRecipes + id),
-  //           headers: _getRequestHeader(token: masterProvider.getToken))
-  //       .then((value) async {
-  //     if (value.statusCode == 200) {
-  //       var response = jsonDecode(value.body);
-  //       recipeData = RecipeData.fromJson(response);
-  //       masterProvider.setRecipeData = recipeData;
-  //     }
-  //     return value.statusCode;
-  //   }).catchError((onError) {
-  //     handleOnError(onError, masterProvider);
-  //     print(onError);
-  //     return -1;
-  //   });
-  // }
+    return await http
+        .get(Uri.parse(_baseUrl + _getMyRecipes),
+            headers: _getRequestHeader(token: await getToken()))
+        .then((value) async {
+      if (value.statusCode == 200) {
+        var response = jsonDecode(value.body);
+        for (var recipelists in response) {
+          myRecipes.add(RecipeData.fromJson(recipelists));
+        }
+        return myRecipes;
+      }
+
+      return null;
+    }).catchError((onError) {
+      print(onError);
+      return null;
+    });
+  }
+
+  Future<List<RecipeData>> getMySavedRecipes() async {
+    List<RecipeData> savedRecipes = [];
+    return await http
+        .get(Uri.parse(_baseUrl + _getMySavedRecipes),
+            headers: _getRequestHeader(token: await getToken()))
+        .then((value) async {
+      if (value.statusCode == 200) {
+        var response = jsonDecode(value.body);
+        for (var recipelists in response) {
+          savedRecipes.add(RecipeData.fromJson(recipelists));
+        }
+        return savedRecipes;
+      }
+      return null;
+    }).catchError((onError) {
+      print(onError);
+      return null;
+    });
+  }
 
   static handleOnError(dynamic onError) {
     print(onError);
