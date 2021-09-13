@@ -4,12 +4,13 @@ import 'package:bet_yaferaw/Components/SignupComponent/bloc/signup_event.dart';
 import 'package:bet_yaferaw/Components/SignupComponent/bloc/signup_state.dart';
 import 'package:bet_yaferaw/Model/user.dart';
 import 'package:bet_yaferaw/Repositories/login_repo.dart';
-import 'package:bet_yaferaw/Service/http_calls.dart';
+// import 'package:bet_yaferaw/Service/http_calls.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:bet_yaferaw/ReusableComponents/snack_bar.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -179,13 +180,45 @@ class _SignupState extends State<Signup> {
                                   RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8)))),
                           onPressed: () async {
-                            BlocProvider.of<SignupBloc>(blocContext).add(
-                                SignupButtonPressed(
-                                    userData: UserData(
-                                        firstname: firstName.text,
-                                        lastname: lastName.text,
-                                        email: emailAddress.text,
-                                        password: enterPassword.text)));
+                            Pattern pattern =
+                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+
+                            RegExp regex = new RegExp(pattern);
+                            if (double.tryParse(firstName.text) != null ||
+                                firstName.text == '' ||
+                                firstName.text.length < 2) {
+                              YRSnackBar(
+                                      errorMessage:
+                                          "Please enter a valid first name")
+                                  .showSnachkBar(context);
+                            } else if (double.tryParse(firstName.text) !=
+                                    null ||
+                                lastName.text == '' ||
+                                lastName.text.length < 2) {
+                              YRSnackBar(
+                                      errorMessage:
+                                          "Please enter a valid last name")
+                                  .showSnachkBar(context);
+                            } else if (!regex.hasMatch(emailAddress.text) ||
+                                emailAddress.text == '') {
+                              YRSnackBar(
+                                      errorMessage:
+                                          "Please enter a valid email address!")
+                                  .showSnachkBar(context);
+                            } else if (enterPassword.text.length < 8) {
+                              YRSnackBar(
+                                      errorMessage:
+                                          "Password can not be less than 8 characters")
+                                  .showSnachkBar(context);
+                            } else {
+                              BlocProvider.of<SignupBloc>(blocContext).add(
+                                  SignupButtonPressed(
+                                      userData: UserData(
+                                          firstname: firstName.text,
+                                          lastname: lastName.text,
+                                          email: emailAddress.text,
+                                          password: enterPassword.text)));
+                            }
                           },
                         ),
                   SizedBox(height: 30),
