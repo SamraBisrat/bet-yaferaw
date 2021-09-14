@@ -313,6 +313,7 @@ class _SignupState extends State<Signup> {
                             } else {
                               BlocProvider.of<SignupBloc>(blocContext).add(
                                   SignupButtonPressed(
+                                      imageFile: imageUrl,
                                       userData: UserData(
                                           firstname: firstName.text,
                                           lastname: lastName.text,
