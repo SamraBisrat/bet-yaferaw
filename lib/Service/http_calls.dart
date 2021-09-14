@@ -7,10 +7,12 @@ import 'package:bet_yaferaw/Model/recipe.dart';
 import 'package:bet_yaferaw/Model/user.dart';
 import 'package:bet_yaferaw/Provider/MasterProvider.dart';
 import 'package:bet_yaferaw/Service/shared_pref.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:path/path.dart' as p;
 
 class HttpCalls {
   //production server
@@ -100,6 +102,17 @@ class HttpCalls {
       // handleOnError(onError, masterProvider);
       return null;
     });
+  }
+
+  Future<String> uploadProfileImage(File image) async {
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('profiles/${p.basename(image.path)}}');
+    StorageUploadTask uploadTask = storageReference.putFile(image);
+
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    String downloadUrl = await (await taskSnapshot.ref.getDownloadURL());
+    return downloadUrl;
   }
 
   // static Future<int> createRecipe(

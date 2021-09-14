@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bet_yaferaw/Components/LoginComponent/login.dart';
 import 'package:bet_yaferaw/Components/SignupComponent/bloc/signup_bloc.dart';
 import 'package:bet_yaferaw/Components/SignupComponent/bloc/signup_event.dart';
@@ -9,8 +11,9 @@ import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:bet_yaferaw/ReusableComponents/snack_bar.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -18,11 +21,94 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  final ImagePicker _picker = ImagePicker();
+  File imageUrl;
   TextEditingController firstName = TextEditingController();
   TextEditingController lastName = TextEditingController();
   TextEditingController emailAddress = TextEditingController();
   TextEditingController enterPassword = TextEditingController();
   // TextEditingController reEnterPassword = TextEditingController();
+
+  Future pickImageFromCamera(BuildContext context) async {
+    XFile image = await _picker.pickImage(source: ImageSource.camera);
+
+    if (image != null) {
+      setState(() {
+        _cropImage(image);
+      });
+    }
+    Navigator.of(context).pop();
+  }
+
+  Future pickImageFromGallery(BuildContext context) async {
+    XFile image = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        _cropImage(image);
+      });
+    }
+    Navigator.of(context).pop();
+  }
+
+  Future<Null> _cropImage(XFile cropped) async {
+    // var img = Image.file(File(cropped.path));
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: cropped.path,
+        cropStyle: CropStyle.rectangle,
+        aspectRatioPresets: Platform.isAndroid
+            ? [
+                CropAspectRatioPreset.square,
+              ]
+            : [
+                CropAspectRatioPreset.square,
+              ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Color(0xff82B242),
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: true),
+        iosUiSettings: IOSUiSettings(
+          title: 'Cropper',
+        ));
+    if (croppedFile != null) {
+      imageUrl = croppedFile;
+
+      setState(() {
+        imageUrl = croppedFile;
+      });
+    }
+  }
+
+  Future<void> _showSelectionDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text("Add profile image"),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    GestureDetector(
+                      child: Text("Use photo in library"),
+                      onTap: () {
+                        pickImageFromGallery(context);
+                      },
+                    ),
+                    Padding(padding: EdgeInsets.all(8.0)),
+                    GestureDetector(
+                      child: Text("Take a new picture"),
+                      onTap: () {
+                        pickImageFromCamera(context);
+                      },
+                    )
+                  ],
+                ),
+              ));
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,18 +137,32 @@ class _SignupState extends State<Signup> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: width,
-              height: height * 0.3,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/Ellipses-new.png'),
-                      fit: BoxFit.fill)),
-              child: SvgPicture.asset(
-                'assets/images/account_circle.svg',
-                fit: BoxFit.none,
+            CircleAvatar(
+              radius: 75.0,
+              child: ClipOval(
+                  child: imageUrl != null
+                      ? Image.file(
+                          imageUrl,
+                        )
+                      : Image.asset("assets/images/account_circle.png")),
+              backgroundColor: Colors.transparent,
+              backgroundImage: AssetImage(
+                "assets/images/account_circle.png",
               ),
             ),
+            SizedBox(height: 15),
+            GestureDetector(
+              child: Text(
+                "Add profile picture",
+                style: TextStyle(
+                    color: Colors.white, decoration: TextDecoration.underline),
+              ),
+              onTap: () {
+                _showSelectionDialog(context);
+                // pickImageFromCamera(context);
+              },
+            ),
+            SizedBox(height: 15),
             Container(
               padding: const EdgeInsets.all(40),
               width: width,
@@ -217,7 +317,8 @@ class _SignupState extends State<Signup> {
                                           firstname: firstName.text,
                                           lastname: lastName.text,
                                           email: emailAddress.text,
-                                          password: enterPassword.text)));
+                                          password: enterPassword.text,
+                                          imageid: blocState.image)));
                             }
                           },
                         ),

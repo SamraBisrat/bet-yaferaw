@@ -16,14 +16,22 @@ class SignupBloc extends Bloc<SignUpEvent, SignupState> {
   @override
   Stream<SignupState> mapEventToState(SignUpEvent event) async* {
     if (event is SignupButtonPressed) {
-      yield state.copyWith(isLoading: true, userData: event.userData);
-
-      String response = await userRepository.createUser(event.userData);
-      print(response);
-
-      if (response != null) {
-        print(response);
-        yield state.copyWith(isLoading: false, userData: event.userData);
+      yield state.copyWith(
+        isLoading: true,
+        userData: event.userData,
+        imageFile: event.imageFile,
+      );
+      String imageResponse =
+          await userRepository.uploadProfileImage(event.imageFile);
+      if (imageResponse.toString() != null) {
+        String response = await userRepository.createUser(event.userData);
+        if (response != null) {
+          yield state.copyWith(
+              isLoading: false, userData: event.userData, image: imageResponse);
+        } else {
+          yield state.copyWith(
+              isLoading: false, exceptionError: "unable to signup");
+        }
       } else {
         yield state.copyWith(
             isLoading: false, exceptionError: "unable to signup");
