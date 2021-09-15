@@ -1,7 +1,11 @@
+import 'package:bet_yaferaw/Components/AddRecipeComponent/bloc/add_recipe_bloc.dart';
+import 'package:bet_yaferaw/Components/AddRecipeComponent/bloc/add_recipe_state.dart';
+import 'package:bet_yaferaw/Repositories/add_recipe_repo.dart';
 import 'package:bet_yaferaw/ReusableComponents/bottom_navigation.dart';
 import 'package:bet_yaferaw/ReusableComponents/snack_bar.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
 class AddRecipe extends StatefulWidget {
@@ -19,6 +23,20 @@ class _AddRecipeState extends State<AddRecipe> {
   TextEditingController ingredientController;
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+          child: BlocProvider(
+              create: (context) =>
+                  AddRecipeBloc(addRecipeRepositories: AddRecipeRepositories()),
+              child: BlocConsumer<AddRecipeBloc, AddRecipeState>(
+                  builder: buildForState,
+                  listener: (blocContext, blocState) {
+                    
+                  }))),
+    );
+  }
+
+  Widget buildForState(blocContext, AddRecipeState blocState) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 

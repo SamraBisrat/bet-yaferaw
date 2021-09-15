@@ -141,6 +141,24 @@ class HttpCalls {
   //     return -1;
   //   });
   // }
+  Future<String> createRecipe(RecipeData recipeData) async {
+    return await http
+        .post(Uri.parse(_baseUrl + _createRecipe),
+            headers: _getRequestHeader(token: await getToken()),
+            body: jsonEncode(recipeData.toJson()))
+        .then((value) async {
+      print(value.statusCode);
+      if (value.statusCode == 200) {
+        var response = jsonDecode(value.body);
+        print(response);
+        return response;
+      }
+      return null;
+    }).catchError((onError) {
+      print(onError);
+      return null;
+    });
+  }
 
   Future<RecipeData> getRecipeById(String id) async {
     print(_baseUrl + _getRecipeById + id);

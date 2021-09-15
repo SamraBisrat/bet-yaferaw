@@ -1,6 +1,8 @@
 import 'package:bet_yaferaw/Components/AddRecipeComponent/add_recipe.dart';
 import 'package:bet_yaferaw/Components/HomeComponent/home.dart';
+import 'package:bet_yaferaw/Components/LoginComponent/login.dart';
 import 'package:bet_yaferaw/Components/ProfileComponent/profile.dart';
+import 'package:bet_yaferaw/Service/shared_pref.dart';
 import 'package:flutter/material.dart';
 
 class YRBottomNavigation extends StatefulWidget {
@@ -14,6 +16,8 @@ class YRBottomNavigation extends StatefulWidget {
 
 class _YRBottomNavigationState extends State<YRBottomNavigation> {
   int indexSelected = 0;
+  bool tokenSaved = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,14 +38,19 @@ class _YRBottomNavigationState extends State<YRBottomNavigation> {
               unselectedItemColor: Color(0xffFD6637),
               selectedItemColor: Color(0xfffea04d),
               iconSize: 25,
-              onTap: (int index) {
+              onTap: (int index) async {
+                String res = await SharedPref.getMyData("myData");
+
                 setState(() {
                   indexSelected = index;
+                  if (res == null) {
+                    tokenSaved = false;
+                  } else
+                    tokenSaved = true;
                 });
                 switch (index) {
                   case 0:
                     {
-                      //
                       print(index);
 
                       Navigator.push(context,
@@ -52,9 +61,13 @@ class _YRBottomNavigationState extends State<YRBottomNavigation> {
                     {
                       //
                       print(index);
-
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => AddRecipe()));
+                      tokenSaved == true
+                          ? Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddRecipe()))
+                          : Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => Login()));
                     }
                     break;
                   case 2:

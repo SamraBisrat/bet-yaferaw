@@ -1,6 +1,7 @@
 import 'package:bet_yaferaw/Components/HomeComponent/bloc/home_bloc.dart';
 import 'package:bet_yaferaw/Components/HomeComponent/bloc/home_state.dart';
 import 'package:bet_yaferaw/Components/RecipeDetailComponent/recipe_detail.dart';
+import 'package:bet_yaferaw/Components/SearchResultComponent/search_result.dart';
 import 'package:bet_yaferaw/Repositories/home_repo.dart';
 import 'package:bet_yaferaw/ReusableComponents/bottom_navigation.dart';
 import 'package:bet_yaferaw/ReusableComponents/camera_scanner_information.dart';
@@ -126,10 +127,18 @@ class _HomeState extends State<Home> {
                             }
                           },
                         )),
-                        Container(
+                        GestureDetector(
+                       child: Container(
                             padding: EdgeInsets.only(bottom: 20, left: 10),
                             child: Icon(Icons.search_outlined,
-                                color: Colors.orange, size: 30))
+                                color: Colors.orange, size: 30)),
+                                onTap: (){
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SearchResult(ingredients)));
+                                },)
                       ])),
               Padding(
                 padding: EdgeInsets.only(top: 20),

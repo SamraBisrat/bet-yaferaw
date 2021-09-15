@@ -43,24 +43,6 @@ class HomeBloc extends Bloc<HomeEvents, HomeState> {
       }
 
       print("profile bloc user response is \n $exploredRecipeResponse");
-    } else if (event is SearchButtonPressed) {
-      yield state.copyWith(isLoading: true);
-
-      List<RecipeData> searchedRecipeResponse =
-          await homeRepository.searchRecipe(event.ingredients);
-
-      if (searchedRecipeResponse != null) {
-        print(searchedRecipeResponse);
-        yield state.copyWith(
-            isLoading: false, searchedRecipe: searchedRecipeResponse);
-      } else {
-        yield state.copyWith(
-            isLoading: false,
-            searchedRecipe: searchedRecipeResponse,
-            exceptionError: "unable to load");
-      }
-    } else {
-      yield state.copyWith(isLoading: false);
-    }
+    } 
   }
 }

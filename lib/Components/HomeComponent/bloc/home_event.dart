@@ -11,11 +11,5 @@ class InitializeExplore extends HomeEvents {
   List<Object> get props => [];
 }
 
-class SearchButtonPressed extends HomeEvents {
-  final List ingredients;
-  SearchButtonPressed(this.ingredients);
 
-  @override
-  List<Object> get props => [ingredients];
-}
 
