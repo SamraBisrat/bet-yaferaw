@@ -1,10 +1,15 @@
+import 'package:bet_yaferaw/Components/HomeComponent/bloc/home_bloc.dart';
+import 'package:bet_yaferaw/Components/HomeComponent/bloc/home_state.dart';
 import 'package:bet_yaferaw/Components/RecipeDetailComponent/recipe_detail.dart';
+import 'package:bet_yaferaw/Components/SearchResultComponent/search_result.dart';
+import 'package:bet_yaferaw/Repositories/home_repo.dart';
 import 'package:bet_yaferaw/ReusableComponents/bottom_navigation.dart';
 import 'package:bet_yaferaw/ReusableComponents/camera_scanner_information.dart';
 import 'package:bet_yaferaw/ReusableComponents/recipe_short_description.dart';
 import 'package:bet_yaferaw/ReusableComponents/snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
 class Home extends StatefulWidget {
@@ -17,10 +22,20 @@ class _HomeState extends State<Home> {
   List<String> ingredients = [];
   @override
   Widget build(BuildContext context) {
-    // MasterProvider masterProvider =
-    //     Provider.of<MasterProvider>(context, listen: false);
-    // double height = MediaQuery.of(context).size.height;
+    return Scaffold(
+      body: SafeArea(
+          child: BlocProvider(
+              create: (context) => HomeBloc(homeRepository: HomeRepository()),
+              child: BlocConsumer<HomeBloc, HomeState>(
+                  builder: buildForState,
+                  listener: (blocContext, blocState) {}))),
+    );
+  }
 
+  Widget buildForState(blocContext, HomeState blocState) {
+    if (blocState.isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
     return Scaffold(
         resizeToAvoidBottomInset: false,
         extendBody: true,
@@ -36,7 +51,7 @@ class _HomeState extends State<Home> {
               Padding(
                   padding: EdgeInsets.only(top: 40),
                   child: Text(
-                    "Hello, Monete",
+                    "Hello",
                     style: TextStyle(
                         color: Color(0xffFD6637),
                         fontSize: 25,
@@ -52,87 +67,79 @@ class _HomeState extends State<Home> {
                       fontWeight: FontWeight.normal),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: TextFieldTags(
-                  tagsStyler: TagsStyler(
-                    showHashtag: false,
-                    tagMargin: const EdgeInsets.only(right: 4.0),
-                    tagCancelIcon:
-                        Icon(Icons.cancel, size: 18.0, color: Colors.white),
-                    tagCancelIconPadding: EdgeInsets.only(left: 4.0, top: 2.0),
-                    tagPadding: EdgeInsets.only(
-                        top: 2.0, bottom: 4.0, left: 8.0, right: 4.0),
-                    tagDecoration: BoxDecoration(
-                      color: Colors.orange,
-                      border: Border.all(
-                        color: Colors.grey.shade300,
-                      ),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(20.0),
-                      ),
-                    ),
-                    tagTextStyle: TextStyle(
-                        fontWeight: FontWeight.normal, color: Colors.white),
-                    tagTextPadding: EdgeInsets.all(4),
-                  ),
-                  textFieldStyler: TextFieldStyler(
-                      cursorColor: Color(0xff07110A),
-                      textFieldFilledColor: Color(0xffC4C4C4).withOpacity(0.18),
-                      hintText: "Search Ingredients",
-                      isDense: true,
-                      textFieldEnabledBorder: InputBorder.none,
-                      textFieldFilled: true,
-                      textFieldFocusedBorder: InputBorder.none,
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
-                  onDelete: (tag) {
-                    ingredients.remove(tag);
-                  },
-                  onTag: (tag) {
-                    if ((ingredients.singleWhere((it) => it == tag,
-                            orElse: () => null)) !=
-                        null) {
-                      print('Already exists!');
-                      YRSnackBar(
-                              title: "Ingredient Already Exists",
-                              errorMessage:
-                                  "Please enter a different ingredient.")
-                          .showSnachkBar(context);
-                    } else {
-                      ingredients.add(tag);
-                    }
-                  },
-                ),
-                // TextFormField(
-                //   cursorColor: Color(0xff07110A),
-                //   controller: _searchController,
-                //   decoration: InputDecoration(
-                //     focusedBorder: InputBorder.none,
-                //     enabledBorder: InputBorder.none,
-                //     errorBorder: InputBorder.none,
-                //     disabledBorder: InputBorder.none,
-                //     fillColor: Color(0xffC4C4C4).withOpacity(0.18),
-                //     filled: true,
-                //     // labelText: "Search",
-                //     hintText: "Search Recipes",
-                //     hintStyle: TextStyle(color: Color(0xff9586A8)),
-                //     prefixIcon: Icon(
-                //       Icons.search,
-                //       color: Color(0xff07110A),
-                //     ),
-                // suffixIcon: IconButton(
-                //     icon: Icon(Icons.clear, color: Color(0xff07110A)),
-                //     onPressed: () {
-                //       _searchController.clear();
-                //     }),
-                //     border: OutlineInputBorder(
-                //       borderSide: BorderSide(color: Colors.transparent),
-                //       borderRadius: BorderRadius.circular(18.0),
-                //     ),
-                //   ),
-                // )
-              ),
+              Container(
+                  padding: EdgeInsets.only(top: 20),
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                            child: TextFieldTags(
+                          tagsStyler: TagsStyler(
+                            showHashtag: false,
+                            tagMargin: const EdgeInsets.only(right: 4.0),
+                            tagCancelIcon: Icon(Icons.cancel,
+                                size: 18.0, color: Colors.white),
+                            tagCancelIconPadding:
+                                EdgeInsets.only(left: 4.0, top: 2.0),
+                            tagPadding: EdgeInsets.only(
+                                top: 2.0, bottom: 4.0, left: 8.0, right: 4.0),
+                            tagDecoration: BoxDecoration(
+                              color: Colors.orange,
+                              border: Border.all(
+                                color: Colors.grey.shade300,
+                              ),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(20.0),
+                              ),
+                            ),
+                            tagTextStyle: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white),
+                            tagTextPadding: EdgeInsets.all(4),
+                          ),
+                          textFieldStyler: TextFieldStyler(
+                              cursorColor: Color(0xff07110A),
+                              textFieldFilledColor:
+                                  Color(0xffC4C4C4).withOpacity(0.18),
+                              hintText: "Search Ingredients",
+                              isDense: true,
+                              textFieldEnabledBorder: InputBorder.none,
+                              textFieldFilled: true,
+                              textFieldFocusedBorder: InputBorder.none,
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 15, horizontal: 10)),
+                          onDelete: (tag) {
+                            ingredients.remove(tag);
+                          },
+                          onTag: (tag) {
+                            if ((ingredients.singleWhere((it) => it == tag,
+                                    orElse: () => null)) !=
+                                null) {
+                              print('Already exists!');
+                              YRSnackBar(
+                                      title: "Ingredient Already Exists",
+                                      errorMessage:
+                                          "Please enter a different ingredient.")
+                                  .showSnachkBar(context);
+                            } else {
+                              ingredients.add(tag);
+                            }
+                          },
+                        )),
+                        GestureDetector(
+                       child: Container(
+                            padding: EdgeInsets.only(bottom: 20, left: 10),
+                            child: Icon(Icons.search_outlined,
+                                color: Colors.orange, size: 30)),
+                                onTap: (){
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SearchResult(ingredients)));
+                                },)
+                      ])),
               Padding(
                 padding: EdgeInsets.only(top: 20),
                 child: CameraScannerInformation(),
@@ -148,17 +155,6 @@ class _HomeState extends State<Home> {
                 ),
               ),
               Container(
-                  child:
-                      // Expanded(
-                      //   flex: 1,
-                      //   child: ListView(
-                      //     shrinkWrap: true,
-                      //     children: [
-                      GestureDetector(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => RecipeDetail()));
-                },
                 child: CustomScrollView(
                     // padding: EdgeInsets.only(bottom: bottom),
                     physics: ScrollPhysics(),
@@ -171,76 +167,32 @@ class _HomeState extends State<Home> {
                         // padding:
                         //     EdgeInsets.symmetric(vertical: 2, horizontal: 0),
                         sliver: SliverGrid.count(
-                          childAspectRatio: 0.7,
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 5,
-                          crossAxisSpacing: 5,
-                          children: [
-                            RecipeShortDescription(
-                                image: "assets/images/sample_food.jpeg",
-                                recipeName: "Spaghetti  Shrimp Sauce",
-                                liked: true,
-                                likes: 20,
-                                cookTime: "20",
-                                serving: 2),
-                            RecipeShortDescription(
-                                image: "assets/images/sample_food.jpeg",
-                                recipeName: "Spaghetti  Shrimp Sauce",
-                                liked: false,
-                                likes: 20,
-                                cookTime: "20",
-                                serving: 2),
-                            RecipeShortDescription(
-                                image: "assets/images/sample_food.jpeg",
-                                recipeName: "Spaghetti  Shrimp Sauce",
-                                liked: false,
-                                likes: 20,
-                                cookTime: "20",
-                                serving: 2),
-                            RecipeShortDescription(
-                                image: "assets/images/sample_food.jpeg",
-                                recipeName: "Spaghetti  Shrimp Sauce",
-                                liked: true,
-                                likes: 20,
-                                cookTime: "20",
-                                serving: 2),
-                            RecipeShortDescription(
-                                image: "assets/images/sample_food.jpeg",
-                                recipeName: "Spaghetti  Shrimp Sauce",
-                                liked: true,
-                                likes: 20,
-                                cookTime: "20",
-                                serving: 2),
-                            RecipeShortDescription(
-                                image: "assets/images/sample_food.jpeg",
-                                recipeName: "Spaghetti  Shrimp Sauce",
-                                liked: false,
-                                likes: 20,
-                                cookTime: "20",
-                                serving: 2),
-                            RecipeShortDescription(
-                                image: "assets/images/sample_food.jpeg",
-                                recipeName: "Spaghetti  Shrimp Sauce",
-                                liked: true,
-                                likes: 20,
-                                cookTime: "20",
-                                serving: 2),
-                            RecipeShortDescription(
-                                image: "assets/images/sample_food.jpeg",
-                                recipeName: "Spaghetti  Shrimp Sauce",
-                                liked: true,
-                                likes: 20,
-                                cookTime: "20",
-                                serving: 2),
-                          ],
-                        ),
+                            childAspectRatio: 0.7,
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 5,
+                            crossAxisSpacing: 5,
+                            children: blocState.exploredRecipe.map((e) {
+                              return GestureDetector(
+                                  child: RecipeShortDescription(
+                                      image: "assets/images/sample_food.jpeg",
+                                      recipeName: e.recipename,
+                                      liked: false,
+                                      likes: e.usersliked == null
+                                          ? 0
+                                          : e.usersliked.length,
+                                      cookTime: e.cookingtime,
+                                      serving: e.serves),
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                RecipeDetail(e.id)));
+                                  });
+                            }).toList()),
                       ),
                     ]),
-              )
-                  //   ],
-                  // ),
-                  ),
-              // )
+              ),
             ],
           ),
         )));

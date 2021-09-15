@@ -1,11 +1,18 @@
 import 'dart:ui';
 
 // import 'package:bet_yaferaw/Provider/MasterProvider.dart';
+import 'package:bet_yaferaw/Components/RecipeDetailComponent/bloc/recipe_detail_bloc.dart';
+import 'package:bet_yaferaw/Components/RecipeDetailComponent/bloc/recipe_detail_state.dart';
+import 'package:bet_yaferaw/Repositories/recipe_detail_repo.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 //import 'package:provider/provider.dart';
 
 class RecipeDetail extends StatefulWidget {
+  final String id;
+  RecipeDetail(this.id, {Key key}) : super(key: key);
+
   @override
   _RecipeDetailState createState() => _RecipeDetailState();
 }
@@ -13,8 +20,24 @@ class RecipeDetail extends StatefulWidget {
 class _RecipeDetailState extends State<RecipeDetail> {
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+          child: BlocProvider(
+              create: (context) => RecipeDetailBloc(widget.id),
+              child: BlocConsumer<RecipeDetailBloc, RecipeDetailState>(
+                  builder: buildForState,
+                  listener: (blocContext, blocState) {}))),
+    );
+  }
+
+  Widget buildForState(blocContext, RecipeDetailState blocState) {
+    if (blocState.isLoading) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     double height = MediaQuery.of(context).size.height;
-    double width = double.infinity;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: SingleChildScrollView(
       child: Container(
@@ -24,7 +47,6 @@ class _RecipeDetailState extends State<RecipeDetail> {
           children: [
             Container(
                 color: Colors.orange,
-                height: height / 3,
                 width: width,
                 child: Image(
                     image: AssetImage("assets/images/sample_food.jpeg"),
@@ -39,7 +61,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Text("Spaghetti with Shrimp Sauce",
+                        child: Text("${blocState.recipeData.recipename}",
                             style: AppTheme.headline,
                             overflow: TextOverflow.ellipsis),
                       ),
@@ -49,26 +71,17 @@ class _RecipeDetailState extends State<RecipeDetail> {
                         //   return
 
                         GestureDetector(
-                          child:
-                              // provider.getliked
-                              //     ? Icon(
-                              //         Icons.favorite_sharp,
-                              //         color: Color(0xffFD6637),
-                              //       )
-                              //     :
-                              Icon(
+                          child: Icon(
                             Icons.favorite_outline_sharp,
                             color: Color(0xffFD6637),
                           ),
-                          onTap: () {
-                            // provider.checkIfFavorite(provider.getliked);
-                          },
-                          //   );
-                          // }
-                          // )
+                          onTap: () {},
                         ),
                         Text(
-                          '20',
+                          blocState.recipeData.usersliked == null
+                              ? '0'
+                              : (blocState.recipeData.usersliked.length)
+                                  .toString(),
                           style: TextStyle(
                             color: Color(0xffD9D0E3),
                           ),
@@ -78,14 +91,15 @@ class _RecipeDetailState extends State<RecipeDetail> {
                   ),
                   Row(
                     children: [
-                      Text("30 mins", style: AppTheme.normaltext),
+                      Text(blocState.recipeData.cookingtime,
+                          style: AppTheme.normaltext),
                       Container(
                           height: 12,
                           child: VerticalDivider(
                               thickness: 2, color: AppTheme.textSecondary)),
                       SizedBox(height: 30),
                       Text(
-                        "2 Servings",
+                        "${blocState.recipeData.serves.toString()} servings" ,
                         style: AppTheme.normaltext,
                       ),
                     ],
@@ -104,8 +118,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
                   ]),
                   SizedBox(height: 20),
                   // Wrap(chil/dren: [
-                  Text(
-                      "The awesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesome thing about this meal is that it is cooked in just one pot. Only having to dirty one pot and deliver an amazing meal for the fam = one happy mama. Cook pasta: In a large pot cook the pasta in boiling water according to package directions. Drain and set aside. Cook the shrimp: Add the shrimp and salt and pepper to taste. Cook until the shrimp start to turn pink. Add italian seasoning and spinach and cook until wilted.",
+                  Text(blocState.recipeData.directions,
                       textAlign: TextAlign.justify
                       // ]),
                       ),

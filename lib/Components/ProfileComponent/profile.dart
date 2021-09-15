@@ -1,11 +1,16 @@
 import 'package:bet_yaferaw/Components/LoginComponent/login.dart';
+import 'package:bet_yaferaw/Components/ProfileComponent/bloc/profile_bloc.dart';
+import 'package:bet_yaferaw/Components/ProfileComponent/bloc/profile_event.dart';
+import 'package:bet_yaferaw/Components/ProfileComponent/bloc/profile_state.dart';
 import 'package:bet_yaferaw/Components/RecipeDetailComponent/recipe_detail.dart';
-import 'package:bet_yaferaw/Provider/MasterProvider.dart';
+import 'package:bet_yaferaw/Repositories/profile_repo.dart';
 import 'package:bet_yaferaw/ReusableComponents/bottom_navigation.dart';
 import 'package:bet_yaferaw/ReusableComponents/recipe_short_description.dart';
+import 'package:bet_yaferaw/ReusableComponents/snack_bar.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -15,8 +20,25 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+          child: BlocProvider(
+              create: (context) =>
+                  ProfileBloc(profileRepository: ProfileRepository()),
+              child: BlocConsumer<ProfileBloc, ProfileState>(
+                  builder: buildForState,
+                  listener: (blocContext, blocState) {}))),
+    );
+  }
+
+  Widget buildForState(blocContext, ProfileState blocState) {
     // MasterProvider masterProvider =
     //     Provider.of<MasterProvider>(context, listen: false);
+
+    if (blocState.isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return DefaultTabController(
@@ -47,7 +69,11 @@ class _ProfileState extends State<Profile> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text("230",
+                                Text(
+                                    blocState.userData.recipescreated == null
+                                        ? '0'
+                                        : blocState
+                                            .userData.recipescreated.length,
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -74,7 +100,7 @@ class _ProfileState extends State<Profile> {
                               ),
                               SizedBox(height: 20),
                               Text(
-                                "Monte Claire",
+                                "${blocState.userData.firstname} ${blocState.userData.lastname}",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 25,
@@ -87,14 +113,18 @@ class _ProfileState extends State<Profile> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text("40",
+                                Text(
+                                    blocState.userData.savedrecipes == null
+                                        ? '0'
+                                        : blocState.userData.savedrecipes.length
+                                            .toString(),
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 30,
                                         fontFamily: AppTheme.fontName)),
                                 Text(
-                                  "Likes",
+                                  "Saved",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 15,
@@ -149,23 +179,37 @@ class _ProfileState extends State<Profile> {
                           child: TabBar(
                             indicatorColor: AppTheme.primaryColor,
                             tabs: [
-                              Tab(
+                              GestureDetector(
+                                child: Tab(
+                                    icon: Icon(
+                                      Icons.grid_on,
+                                      color: AppTheme.primaryColor,
+                                    ),
+                                    child: Text("Posted Recipes",
+                                        style: TextStyle(
+                                            color: AppTheme.primaryColor))),
+                                onTap: () {
+                                  print("created");
+                                  BlocProvider.of<ProfileBloc>(blocContext)
+                                      .add(CreatedRecipesPressed());
+                                },
+                              ),
+                              GestureDetector(
+                                child: Tab(
                                   icon: Icon(
-                                    Icons.grid_on,
+                                    Icons.bookmark_border_sharp,
                                     color: AppTheme.primaryColor,
                                   ),
-                                  child: Text("Posted Recipes",
+                                  child: Text("Saved Recipes",
                                       style: TextStyle(
-                                          color: AppTheme.primaryColor))),
-                              Tab(
-                                icon: Icon(
-                                  Icons.bookmark_border_sharp,
-                                  color: AppTheme.primaryColor,
+                                          color: AppTheme.primaryColor)),
                                 ),
-                                child: Text("Saved Recipes",
-                                    style: TextStyle(
-                                        color: AppTheme.primaryColor)),
-                              ),
+                                onTap: () {
+                                  print("saved");
+                                  BlocProvider.of<ProfileBloc>(blocContext)
+                                      .add(SavedRecipesPressed());
+                                },
+                              )
                             ],
                           ),
                         ),
@@ -173,15 +217,6 @@ class _ProfileState extends State<Profile> {
                           child: TabBarView(
                             children: [
                               Container(
-                                  // height: height,
-                                  child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              RecipeDetail()));
-                                },
                                 child: CustomScrollView(
                                     physics: ScrollPhysics(),
                                     shrinkWrap: true,
@@ -190,98 +225,42 @@ class _ProfileState extends State<Profile> {
                                         padding: EdgeInsets.symmetric(
                                             vertical: 2, horizontal: 0),
                                         sliver: SliverGrid.count(
-                                          childAspectRatio: 0.7,
-                                          crossAxisCount: 2,
-                                          mainAxisSpacing: 5,
-                                          crossAxisSpacing: 5,
-                                          children: [
-                                            RecipeShortDescription(
-                                                image:
-                                                    "assets/images/sample_food.jpeg",
-                                                recipeName:
-                                                    "Spaghetti  Shrimp Sauce",
-                                                // liked: masterProvider.getliked,
-                                                likes: 20,
-                                                cookTime: "20",
-                                                serving: 2),
-                                            RecipeShortDescription(
-                                                image:
-                                                    "assets/images/sample_food.jpeg",
-                                                recipeName:
-                                                    "Spaghetti  Shrimp Sauce",
-                                                // liked: masterProvider.getliked,
-                                                likes: 20,
-                                                cookTime: "20",
-                                                serving: 2),
-                                            RecipeShortDescription(
-                                                image:
-                                                    "assets/images/sample_food.jpeg",
-                                                recipeName:
-                                                    "Spaghetti  Shrimp Sauce",
-                                                // liked: masterProvider.getliked,
-                                                likes: 20,
-                                                cookTime: "20",
-                                                serving: 2),
-                                            RecipeShortDescription(
-                                                image:
-                                                    "assets/images/sample_food.jpeg",
-                                                recipeName:
-                                                    "Spaghetti  Shrimp Sauce",
-                                                // liked: masterProvider.getliked,
-                                                likes: 20,
-                                                cookTime: "20",
-                                                serving: 2),
-                                            RecipeShortDescription(
-                                                image:
-                                                    "assets/images/sample_food.jpeg",
-                                                recipeName:
-                                                    "Spaghetti  Shrimp Sauce",
-                                                // liked: masterProvider.getliked,
-                                                likes: 20,
-                                                cookTime: "20",
-                                                serving: 2),
-                                            RecipeShortDescription(
-                                                image:
-                                                    "assets/images/sample_food.jpeg",
-                                                recipeName:
-                                                    "Spaghetti  Shrimp Sauce",
-                                                //    liked: masterProvider.getliked,
-                                                likes: 20,
-                                                cookTime: "20",
-                                                serving: 2),
-                                            RecipeShortDescription(
-                                                image:
-                                                    "assets/images/sample_food.jpeg",
-                                                recipeName:
-                                                    "Spaghetti  Shrimp Sauce",
-                                                //      liked: masterProvider.getliked,
-                                                likes: 20,
-                                                cookTime: "20",
-                                                serving: 2),
-                                            RecipeShortDescription(
-                                                image:
-                                                    "assets/images/sample_food.jpeg",
-                                                recipeName:
-                                                    "Spaghetti  Shrimp Sauce",
-                                                //       liked: masterProvider.getliked,
-                                                likes: 20,
-                                                cookTime: "20",
-                                                serving: 2),
-                                          ],
-                                        ),
+                                            childAspectRatio: 0.7,
+                                            crossAxisCount: 2,
+                                            mainAxisSpacing: 5,
+                                            crossAxisSpacing: 5,
+                                            children:
+                                                blocState.myRecipes.map((e) {
+                                              return GestureDetector(
+                                                child: RecipeShortDescription(
+                                                    image:
+                                                        "assets/images/sample_food.jpeg",
+                                                    recipeName: e.recipename,
+                                                    liked: e.usersliked == null
+                                                        ? false
+                                                        : e.usersliked.contains(
+                                                            blocState
+                                                                .userData.id),
+                                                    likes: e.usersliked == null
+                                                        ? 0
+                                                        : e.usersliked.length,
+                                                    cookTime: e.cookingtime,
+                                                    serving: e.serves),
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              RecipeDetail(
+                                                                  e.id)));
+                                                },
+                                              );
+                                            }).toList()),
                                       )
                                     ]),
-                              )),
+                              ),
                               Container(
-                                  // height: height,
-                                  child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              RecipeDetail()));
-                                },
+                                // height: height,
                                 child: CustomScrollView(
                                     physics: ScrollPhysics(),
                                     shrinkWrap: true,
@@ -290,25 +269,42 @@ class _ProfileState extends State<Profile> {
                                         padding: EdgeInsets.symmetric(
                                             vertical: 2, horizontal: 0),
                                         sliver: SliverGrid.count(
-                                          childAspectRatio: 0.7,
-                                          crossAxisCount: 2,
-                                          mainAxisSpacing: 5,
-                                          crossAxisSpacing: 5,
-                                          children: [
-                                            RecipeShortDescription(
-                                                image:
-                                                    "assets/images/sample_food.jpeg",
-                                                recipeName:
-                                                    "Spaghetti  Shrimp Sauce",
-                                                liked: true,
-                                                likes: 20,
-                                                cookTime: "20",
-                                                serving: 2),
-                                          ],
-                                        ),
+                                            childAspectRatio: 0.7,
+                                            crossAxisCount: 2,
+                                            mainAxisSpacing: 5,
+                                            crossAxisSpacing: 5,
+                                            children: blocState.mySavedRecipes
+                                                .map((e) {
+                                              return GestureDetector(
+                                                child: RecipeShortDescription(
+                                                    image:
+                                                        "assets/images/sample_food.jpeg",
+                                                    recipeName: e.recipename,
+                                                    liked: e.usersliked == null
+                                                        ? false
+                                                        : e.usersliked.contains(
+                                                            blocState
+                                                                .userData.id),
+                                                    likes: e.usersliked == null
+                                                        ? 0
+                                                        : e.usersliked.length,
+                                                    cookTime: e.cookingtime,
+                                                    serving: e.serves),
+                                                onTap: () {
+                                                  print(e.toJson());
+                                                  print(e.id);
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              RecipeDetail(
+                                                                  e.id)));
+                                                },
+                                              );
+                                            }).toList()),
                                       )
                                     ]),
-                              )),
+                              ),
                             ],
                           ),
                         ),

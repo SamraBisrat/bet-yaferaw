@@ -43,6 +43,7 @@ class UserData {
       savedrecipes: json["savedrecipes"]);
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "firstname": firstname,
         "lastname": lastname,
         "password": password,
