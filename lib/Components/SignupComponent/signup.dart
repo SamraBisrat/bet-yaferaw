@@ -27,7 +27,6 @@ class _SignupState extends State<Signup> {
   TextEditingController lastName = TextEditingController();
   TextEditingController emailAddress = TextEditingController();
   TextEditingController enterPassword = TextEditingController();
-  // TextEditingController reEnterPassword = TextEditingController();
 
   Future pickImageFromCamera(BuildContext context) async {
     XFile image = await _picker.pickImage(source: ImageSource.camera);
@@ -117,13 +116,22 @@ class _SignupState extends State<Signup> {
               create: (context) => SignupBloc(userRepository: UserRepository()),
               child: BlocConsumer<SignupBloc, SignupState>(
                   builder: buildForState,
-                  listener: (blocContext, blocState) async {}))),
+                  listener: (blocContext, blocState) {
+                    if (blocState.signed == null) {
+                      print("is null");
+                    } else {
+                      if (blocState.signed == true) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Login()));
+                      } else {
+                        YRSnackBar(errorMessage: blocState.exceptionError);
+                      }
+                    }
+                  }))),
     );
   }
 
   Widget buildForState(blocContext, SignupState blocState) {
-    // MasterProvider masterProvider =
-    //     Provider.of<MasterProvider>(context, listen: false);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -241,27 +249,7 @@ class _SignupState extends State<Signup> {
                         enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: AppTheme.lightGrey))),
                   ),
-                  // SizedBox(height: 30),
-                  // TextField(
-                  //   controller: reEnterPassword,
-                  //   obscureText: true,
-                  //   decoration: InputDecoration(
-                  //       hintText: 'Re-enter your password'.toUpperCase(),
-                  //       prefixIcon: Padding(
-                  //         padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
-                  //         child: Icon(
-                  //           Icons.lock,
-                  //           color: AppTheme.lightGrey,
-                  //         ),
-                  //       ),
-                  //       enabledBorder: UnderlineInputBorder(
-                  //           borderSide: BorderSide(color: AppTheme.lightGrey))),
-                  // ),
                   SizedBox(height: 50.0),
-                  // Consumer<MasterProvider>(
-                  //     builder: ((context, provider, child) {
-                  //   return provider.getLoading
-                  // CircularProgressIndicator()
                   blocState.isLoading
                       ? CircularProgressIndicator()
                       : ElevatedButton(

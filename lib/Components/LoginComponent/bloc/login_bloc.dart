@@ -26,7 +26,8 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
       if (response != null) {
         yield state.copyWith(isLoading: false, tokenSaved: true);
       } else {
-        yield state.copyWith(isLoading: false, exceptionError: response);
+        yield state.copyWith(
+            isLoading: false, exceptionError: response, tokenSaved: false);
       }
     }
   }

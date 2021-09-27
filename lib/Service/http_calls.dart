@@ -17,7 +17,8 @@ import 'package:path/path.dart' as p;
 class HttpCalls {
   //production server
   static const String _baseUrl = "https://bet-yaferaw.herokuapp.com";
-
+  static const String _predictionUrl =
+      "https://bet-yaferaw-scanner.herokuapp.com/uploads";
   //local server
   // static const String _baseUrl = "https://localhost:5000";
   // static const String imageHolderUrl = "http://144.126.193.76:5000/api/Images/";
@@ -29,12 +30,17 @@ class HttpCalls {
   static const String _createRecipe = "/recipe";
 
   //Patch
-  static const String _updateRecipe = "/updateRecipe/recipeid";
+  static const String _updateRecipe = "/updateRecipe/recipeid?recipeid=";
   static const String _updateUser = "/updateUser/userid";
 
   //Gets
   static const String _getUserById = "/user/id";
   static const String _getRecipeById = "/recipe/id?recipeid=";
+
+  //Delete
+  static const String _deleteRecipe = "/delete/recipe?recipeid=";
+  static const String _deleteUser = "/delete/user";
+
   static const String _getUsers = "/get/users";
   static const String _getRecipes = "/get/recipes";
   static const String _getMyRecipes = "/recipes/userid";
@@ -77,8 +83,13 @@ class HttpCalls {
         var response = jsonDecode(value.body);
         var token = response["token"];
         await SharedPref.storeToken(token.toString());
-        print("token in shared pref login");
-        print(await SharedPref.getToken());
+        if (await SharedPref.getToken() != null) {
+          getMyAccount();
+          print("token in shared pref login");
+          print(await SharedPref.getToken());
+        } else {
+          print(await SharedPref.getToken());
+        }
         return token.toString();
       }
       return null;
@@ -109,14 +120,40 @@ class HttpCalls {
   }
 
   Future<String> uploadProfileImage(File image) async {
-    StorageReference storageReference = FirebaseStorage.instance
-        .ref()
-        .child('profiles/${p.basename(image.path)}}');
-    StorageUploadTask uploadTask = storageReference.putFile(image);
+    if (image != null) {
+      StorageReference storageReference = FirebaseStorage.instance
+          .ref()
+          .child('profiles/${p.basename(image.path)}}');
+      StorageUploadTask uploadTask = storageReference.putFile(image);
 
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    String downloadUrl = await (await taskSnapshot.ref.getDownloadURL());
-    return downloadUrl;
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+      String downloadUrl = await (await taskSnapshot.ref.getDownloadURL());
+      return downloadUrl;
+    } else {
+      return null;
+    }
+  }
+
+  Future<int> updateUser(UserData userData) async {
+    return await http
+        .patch(Uri.parse(_baseUrl + _updateUser),
+            headers: _getRequestHeader(token: await getToken()),
+            body: jsonEncode(userData.toJson()))
+        .then((value) async {
+      print(value.body);
+      if (value.statusCode == 200) {
+        //    var response = jsonDecode(value.body);
+        // var id = response["id"];
+        await getMyAccount();
+        // print(id.toString());
+
+      }
+      return value.statusCode;
+    }).catchError((onError) {
+      print(onError);
+      // handleOnError(onError, masterProvider);
+      return -1;
+    });
   }
 
   // static Future<int> createRecipe(
@@ -157,6 +194,50 @@ class HttpCalls {
     }).catchError((onError) {
       print(onError);
       return null;
+    });
+  }
+
+  Future<int> updateRecipe(List liked, String id) async {
+    return await http
+        .patch(Uri.parse(_baseUrl + _updateRecipe + id),
+            headers: _getRequestHeader(token: await getToken()),
+            body: jsonEncode({"usersliked": liked}))
+        .then((value) async {
+      print("here");
+      print(value.statusCode);
+
+      if (value.statusCode == 200) {
+        // var response = jsonDecode(value.body);
+        print("value of body");
+        // print(response);
+        return 200;
+      }
+      return value.statusCode;
+    }).catchError((onError) {
+      print(onError);
+      return -1;
+    });
+  }
+
+  Future<int> deleteRecipe(String id) async {
+    return await http
+        .delete(Uri.parse(_baseUrl + _deleteRecipe + id),
+            headers: _getRequestHeader(token: await getToken()))
+        .then((value) async {
+      print("here");
+      print(value.statusCode);
+
+      if (value.statusCode == 200) {
+        // var response = jsonDecode(value.body);
+        print("value of body");
+        // print(response);
+        await getMyAccount();
+        return 200;
+      }
+      return value.statusCode;
+    }).catchError((onError) {
+      print(onError);
+      return -1;
     });
   }
 
@@ -207,69 +288,6 @@ class HttpCalls {
       return null;
     });
   }
-
-  // Future<int> updateUser(
-  //     UserData userData, MasterProvider masterProvider) async {
-  //   Map<String, dynamic> payload = JwtDecoder.decode(masterProvider.getToken);
-  //   String id = payload["id"];
-  //   return await http
-  //       .patch(Uri.parse(_baseUrl + _updateUser + id),
-  //           headers: _getRequestHeader(token: masterProvider.getToken))
-  //       .then((value) async {
-  //     if (value.statusCode == 200) {
-  //       var response = jsonDecode(value.body);
-  //       userData = UserData.fromJson(response);
-  //       masterProvider.setUserdata = userData;
-  //       await SharedPref.storeMyData(
-  //           "userData", json.encode(userData.toJson()));
-  //       print(userData.toJson());
-  //     }
-  //     return value.statusCode;
-  //   }).catchError((onError) {
-  //     handleOnError(onError, masterProvider);
-  //     print(onError);
-  //     return -1;
-  //   });
-  // }
-
-  // Future<int> updateRecipe(RecipeData recipeData, MasterProvider masterProvider,
-  //     String recipeId) async {
-  //   return await http
-  //       .patch(Uri.parse(_baseUrl + _updateRecipe + recipeId),
-  //           headers: _getRequestHeader(token: masterProvider.getToken))
-  //       .then((value) async {
-  //     if (value.statusCode == 200) {
-  //       var response = jsonDecode(value.body);
-  //       recipeData = RecipeData.fromJson(response);
-  //       masterProvider.setRecipeData = recipeData;
-  //       print(recipeData.toJson());
-  //     }
-  //     return value.statusCode;
-  //   }).catchError((onError) {
-  //     handleOnError(onError, masterProvider);
-  //     print(onError);
-  //     return -1;
-  //   });
-  // }
-
-  // static Future<int> getUsersById(
-  //     UserData userData, MasterProvider masterProvider, String id) async {
-  //   return await http
-  //       .get(Uri.parse(_baseUrl + _getUserById + id),
-  //           headers: _getRequestHeader(token: masterProvider.getToken))
-  //       .then((value) async {
-  //     if (value.statusCode == 200) {
-  //       var response = jsonDecode(value.body);
-  //       userData = UserData.fromJson(response);
-  //       masterProvider.setUserdata = userData;
-  //     }
-  //     return value.statusCode;
-  //   }).catchError((onError) {
-  //     handleOnError(onError, masterProvider);
-  //     print(onError);
-  //     return -1;
-  //   });
-  // }
 
   Future<List<RecipeData>> searchRecipe(List ingredients) async {
     List<RecipeData> recipeDatas = [];
@@ -394,6 +412,56 @@ class HttpCalls {
       return null;
     });
   }
+
+  Future<dynamic> scannedIngregients(File image) async {
+    // final response;
+    var uri = Uri.parse(_predictionUrl);
+    final request = http.MultipartRequest('POST', uri);
+    final file = await http.MultipartFile.fromPath('file', image.path);
+    request.files.add(file);
+    try {
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode != 200 || response.statusCode != 204) {
+        print("image post  ${response.statusCode}");
+        return null;
+      }
+      print("imageScanner");
+      print(response);
+      return response;
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  // static Future<int> imagePost(
+  //     MasterProvider masterProvider, File image, String accountId) async {
+  //   //var stream = new http.ByteStream(DelegatingStream.typed(image.openRead()));
+  //   //var length = await image.length();
+
+  //   var uri = Uri.parse(_baseUrl + _imagePost + accountId);
+
+  //   final request = http.MultipartRequest('POST', uri);
+  //   final file = await http.MultipartFile.fromPath('image', image.path);
+  //   request.headers.addAll(_getRequestHeader(token: masterProvider.getToken));
+  //   request.files.add(file);
+  //   try {
+  //     final streamedResponse = await request.send();
+  //     final response = await http.Response.fromStream(streamedResponse);
+  //     if (response.statusCode != 200 || response.statusCode != 204) {
+  //       print("image post  ${response.statusCode}");
+  //       return null;
+  //     }
+  //     // final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+  //     return response.statusCode;
+  //   } catch (e) {
+  //     print(e);
+  //     handleOnError(e, masterProvider);
+
+  //     return null;
+  //   }
+  // }
 
   static handleOnError(dynamic onError) {
     print(onError);

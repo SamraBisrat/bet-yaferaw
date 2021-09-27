@@ -40,7 +40,7 @@ class _LoginState extends State<Login> {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => Home()));
                       } else if (blocState.tokenSaved == false) {
-                        YRSnackBar(errorMessage: "Unable to login");
+                        YRSnackBar(errorMessage: blocState.exceptionError);
                       } else {}
                     }
                   }))),

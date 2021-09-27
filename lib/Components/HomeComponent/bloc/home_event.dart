@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 
 abstract class HomeEvents extends Equatable {
@@ -11,5 +13,17 @@ class InitializeExplore extends HomeEvents {
   List<Object> get props => [];
 }
 
+class ScanIngredients extends HomeEvents {
+  ScanIngredients(this.image);
+  final File image;
+  @override
+  List<Object> get props => [image];
+}
 
+// class ScannedResponse extends ScanEvents {
+//   ScannedResponse(this.ingredients);
+//   final List ingredients;
+//   @override
+//   List<Object> get props => [ingredients];
+// }
 

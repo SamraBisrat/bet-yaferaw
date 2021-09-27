@@ -17,7 +17,8 @@ class UserData {
       this.imageid,
       this.recipescreated,
       this.savedrecipes,
-      this.totallikes});
+      this.totallikes,
+      this.role});
 
   String id;
   int intid;
@@ -29,6 +30,7 @@ class UserData {
   int totallikes;
   List recipescreated;
   List savedrecipes;
+  String role;
 
   factory UserData.fromJson(Map<String, dynamic> json) => UserData(
       id: json["id"],
@@ -40,7 +42,8 @@ class UserData {
       imageid: json["imageid"],
       totallikes: json["totallikes"],
       recipescreated: json["recipescreated"],
-      savedrecipes: json["savedrecipes"]);
+      savedrecipes: json["savedrecipes"],
+      role: json["roles"]);
 
   Map<String, dynamic> toJson() => {
         "id": id,

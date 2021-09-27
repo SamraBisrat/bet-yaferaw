@@ -7,18 +7,19 @@ String recipeDataToJson(List<RecipeData> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class RecipeData {
-  RecipeData(
-      {this.id,
-      this.intid,
-      this.categories,
-      this.recipename,
-      this.directions,
-      this.ingredients,
-      this.serves,
-      this.cookingtime,
-      this.imageid,
-      this.userid,
-      this.usersliked});
+  RecipeData({
+    this.id,
+    this.intid,
+    this.categories,
+    this.recipename,
+    this.directions,
+    this.ingredients,
+    this.serves,
+    this.cookingtime,
+    this.imageid,
+    this.userid,
+    this.usersliked,
+  });
 
   String id;
   int intid;
@@ -33,17 +34,18 @@ class RecipeData {
   List usersliked;
 
   factory RecipeData.fromJson(Map<String, dynamic> json) => RecipeData(
-      id: json["id"],
-      intid: json["intid"],
-      categories: json["categories"],
-      recipename: json["recipename"],
-      directions: json["directions"],
-      ingredients: json["ingredients"],
-      serves: json["serves"],
-      cookingtime: json["cookingtime"],
-      userid: json["userid"],
-      imageid: json["imageid"],
-      usersliked: json["usersliked"]);
+        id: json["id"],
+        intid: json["intid"],
+        categories: json["categories"],
+        recipename: json["recipename"],
+        directions: json["directions"],
+        ingredients: json["ingredients"],
+        serves: json["serves"],
+        cookingtime: json["cookingtime"],
+        userid: json["userid"],
+        imageid: json["imageid"],
+        usersliked: json["usersliked"],
+      );
 
   Map<String, dynamic> toJson() => {
         "categories": categories,
