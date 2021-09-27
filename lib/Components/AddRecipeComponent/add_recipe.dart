@@ -7,6 +7,9 @@ import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:textfield_tags/textfield_tags.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'dart:io';
 
 class AddRecipe extends StatefulWidget {
   const AddRecipe({Key key}) : super(key: key);
@@ -16,11 +19,98 @@ class AddRecipe extends StatefulWidget {
 }
 
 class _AddRecipeState extends State<AddRecipe> {
+  final ImagePicker _picker = ImagePicker();
+  File imageUrl;
+
+  Future pickImageFromCamera(BuildContext context) async {
+    XFile image = await _picker.pickImage(source: ImageSource.camera);
+
+    if (image != null) {
+      setState(() {
+        _cropImage(image);
+      });
+    }
+  }
+
+  Future pickImageFromGallery(BuildContext context) async {
+    XFile image = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        _cropImage(image);
+      });
+    }
+  }
+
+  Future<Null> _cropImage(XFile cropped) async {
+    // var img = Image.file(File(cropped.path));
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: cropped.path,
+        cropStyle: CropStyle.rectangle,
+        aspectRatioPresets: Platform.isAndroid
+            ? [
+                CropAspectRatioPreset.square,
+              ]
+            : [
+                CropAspectRatioPreset.square,
+              ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Color(0xff82B242),
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: true),
+        iosUiSettings: IOSUiSettings(
+          title: 'Cropper',
+        ));
+    if (croppedFile != null) {
+      imageUrl = croppedFile;
+
+      setState(() {
+        imageUrl = croppedFile;
+      });
+    }
+  }
+
+  Future<void> _showSelectionDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text("Add profile image"),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    GestureDetector(
+                      child: Text("Use photo in library"),
+                      onTap: () {
+                        pickImageFromGallery(context);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    Padding(padding: EdgeInsets.all(8.0)),
+                    GestureDetector(
+                      child: Text("Take a new picture"),
+                      onTap: () {
+                        pickImageFromCamera(context);
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                ),
+              ));
+        });
+  }
+
   List<Ingredients> ingredients = [];
+  List<Ingredients> uiIngredients = [];
+
   String categoryController;
   String cookingController;
   String servingController;
-  TextEditingController ingredientController;
+  TextEditingController titleController;
+  TextEditingController descriptionController;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,6 +154,9 @@ class _AddRecipeState extends State<AddRecipe> {
                           borderRadius: BorderRadius.circular(8.0),
                           color: Colors.grey.shade800.withOpacity(0.66)),
                       child: ListTile(
+                        onTap: () {
+                          _showSelectionDialog(context);
+                        },
                         dense: true,
                         horizontalTitleGap: 0,
                         leading: Icon(
@@ -78,6 +171,7 @@ class _AddRecipeState extends State<AddRecipe> {
                 )
               ]),
               TextFormField(
+                controller: titleController,
                 decoration: InputDecoration(
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Color(0xffC4C4C4)),
@@ -188,7 +282,7 @@ class _AddRecipeState extends State<AddRecipe> {
                             width: screenWidth / 2,
                             child: DropdownButtonFormField(
                               itemHeight: 100,
-                              menuMaxHeight: 100,
+                              // menuMaxHeight: 100,
                               decoration:
                                   InputDecoration.collapsed(hintText: ""),
                               value: servingController,
@@ -208,6 +302,27 @@ class _AddRecipeState extends State<AddRecipe> {
                               }).toList(),
                             )),
                       ])),
+              Divider(
+                color: Color(0xffC4C4C4),
+                thickness: 1,
+                height: 0,
+              ),
+              TextFormField(
+                controller: descriptionController,
+                maxLines: 5,
+                decoration: InputDecoration(
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xffC4C4C4)),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xffFD6637)),
+                    ),
+                    isDense: true,
+                    alignLabelWithHint: true,
+                    border: UnderlineInputBorder(),
+                    labelText: 'Description',
+                    labelStyle: TextStyle(color: Color(0xffFD6637))),
+              ),
               Divider(
                 color: Color(0xffC4C4C4),
                 thickness: 1,
@@ -243,69 +358,60 @@ class _AddRecipeState extends State<AddRecipe> {
             constraints: BoxConstraints(minWidth: 48),
             child: IntrinsicWidth(
               child: TextFieldTags(
-                tagsStyler: TagsStyler(
-                  showHashtag: false,
-                  tagMargin: const EdgeInsets.only(right: 4.0),
-                  tagCancelIcon:
-                      Icon(Icons.cancel, size: 15.0, color: Colors.white),
-                  tagCancelIconPadding: EdgeInsets.only(left: 4.0, top: 2.0),
-                  tagPadding: EdgeInsets.only(
-                      top: 2.0, bottom: 4.0, left: 8.0, right: 4.0),
-                  tagDecoration: BoxDecoration(
-                    color: Colors.orange,
-                    border: Border.all(
-                      color: Colors.grey.shade300,
+                  tagsStyler: TagsStyler(
+                    showHashtag: false,
+                    tagMargin: const EdgeInsets.only(right: 4.0),
+                    tagCancelIcon:
+                        Icon(Icons.cancel, size: 15.0, color: Colors.white),
+                    tagCancelIconPadding: EdgeInsets.only(left: 4.0, top: 2.0),
+                    tagPadding: EdgeInsets.only(
+                        top: 2.0, bottom: 4.0, left: 8.0, right: 4.0),
+                    tagDecoration: BoxDecoration(
+                      color: Colors.orange,
+                      border: Border.all(
+                        color: Colors.grey.shade300,
+                      ),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(20.0),
+                      ),
                     ),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(20.0),
+                    tagTextStyle: TextStyle(
+                        fontWeight: FontWeight.normal, color: Colors.white),
+                  ),
+                  textFieldStyler: TextFieldStyler(
+                    hintText: "",
+                    isDense: false,
+                    textFieldFocusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black, width: 3.0),
+                    ),
+                    textFieldBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black, width: 3.0),
                     ),
                   ),
-                  tagTextStyle: TextStyle(
-                      fontWeight: FontWeight.normal, color: Colors.white),
-                ),
-                textFieldStyler: TextFieldStyler(
-                  hintText: "",
-                  isDense: false,
-                  textFieldFocusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black, width: 3.0),
-                  ),
-                  textFieldBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black, width: 3.0),
-                  ),
-                ),
-                onDelete: (tag) {
-                  ingredients.remove(tag);
-                },
-                onTag: (tag) {
-                  if ((ingredients.singleWhere((it) => it.ingredient == tag,
-                          orElse: () => null)) !=
-                      null) {
-                    print('Already exists!');
-                    YRSnackBar(
-                            title: "Ingredient Already Exists",
-                            errorMessage:
-                                "Please enter a different ingredient.")
-                        .showSnachkBar(context);
-                  } else {
-                    ingredients.add(Ingredients(ingredient: tag));
-                  }
-                },
-                validator: (String tag) {
-                  if (tag.length > 15) {
-                    return "hey that is too much";
-                  } else if (tag.isEmpty) {
-                    return "enter something";
-                  }
-                  return null;
-                },
-              ),
+                  onDelete: (tag) {
+                    ingredients.remove(tag);
+                  },
+                  onTag: (tag) {
+                    if ((ingredients.singleWhere((it) => it.ingredient == tag,
+                            orElse: () => null)) !=
+                        null) {
+                      YRSnackBar(
+                              title: "Ingredient Already Exists",
+                              errorMessage:
+                                  "Please enter a different ingredient.")
+                          .showSnachkBar(context);
+                    } else {
+                      ingredients.add(Ingredients(ingredient: tag));
+                    }
+                  }),
             )),
         actions: <Widget>[
           ElevatedButton(
               onPressed: () {
-                for (var element in ingredients) {
-                  print(element.ingredient);
-                }
+                Navigator.pop(context);
+                setState(() {
+                  uiIngredients = ingredients;
+                });
               },
               child: Text('Add')),
           ElevatedButton(
@@ -330,7 +436,7 @@ class _AddRecipeState extends State<AddRecipe> {
     return ListView.builder(
         physics: ScrollPhysics(),
         shrinkWrap: true,
-        itemCount: ingredients.length,
+        itemCount: uiIngredients.length,
         itemBuilder: (context, index) {
           return ListTile(
               shape: RoundedRectangleBorder(
@@ -338,13 +444,13 @@ class _AddRecipeState extends State<AddRecipe> {
                       style: BorderStyle.solid, color: Color(0xff0BCE83)),
                   borderRadius: BorderRadius.circular(12.0)),
               contentPadding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
-              leading: Text(ingredients[index].ingredient.toString()),
+              leading: Text(uiIngredients[index].ingredient.toString()),
               trailing: IconButton(
                 icon: Icon(Icons.close, size: 16, color: AppTheme.primaryColor),
                 onPressed: () {
                   setState(() {
-                    ingredients.removeWhere((element) =>
-                        element.ingredient == ingredients[index].ingredient);
+                    uiIngredients.removeWhere((element) =>
+                        element.ingredient == uiIngredients[index].ingredient);
                   });
                 },
               ));
