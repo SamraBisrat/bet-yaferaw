@@ -3,6 +3,7 @@ import 'package:bet_yaferaw/Components/ProfileComponent/bloc/profile_bloc.dart';
 import 'package:bet_yaferaw/Components/ProfileComponent/bloc/profile_event.dart';
 import 'package:bet_yaferaw/Components/ProfileComponent/bloc/profile_state.dart';
 import 'package:bet_yaferaw/Components/RecipeDetailComponent/recipe_detail.dart';
+import 'package:bet_yaferaw/Components/SettingsComponent/settings.dart';
 import 'package:bet_yaferaw/Repositories/profile_repo.dart';
 import 'package:bet_yaferaw/ReusableComponents/bottom_navigation.dart';
 import 'package:bet_yaferaw/ReusableComponents/recipe_short_description.dart';
@@ -144,7 +145,7 @@ class _ProfileState extends State<Profile> {
                         PopupMenuButton<String>(
                           onSelected: choiceAction,
                           itemBuilder: (BuildContext context) {
-                            return {'Logout'}.map((String choice) {
+                            return {'Settings', 'Logout'}.map((String choice) {
                               return PopupMenuItem<String>(
                                 value: choice,
                                 child: Text(choice),
@@ -323,9 +324,9 @@ class _ProfileState extends State<Profile> {
   }
 
   void choiceAction(String value) async {
-    if (value == "Edit") {
-      // Navigator.push(context,
-      //     MaterialPageRoute(builder: (context) => EditEquberProfile()));
+    if (value == "Settings") {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Settings()));
     } else if (value == "Logout") {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
     }
