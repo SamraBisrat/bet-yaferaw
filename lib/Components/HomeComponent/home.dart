@@ -1,4 +1,5 @@
 import 'package:bet_yaferaw/Components/HomeComponent/bloc/home_bloc.dart';
+import 'package:bet_yaferaw/Components/HomeComponent/bloc/home_event.dart';
 import 'package:bet_yaferaw/Components/HomeComponent/bloc/home_state.dart';
 import 'package:bet_yaferaw/Components/RecipeDetailComponent/recipe_detail.dart';
 import 'package:bet_yaferaw/Components/SearchResultComponent/search_result.dart';
@@ -28,7 +29,18 @@ class _HomeState extends State<Home> {
               create: (context) => HomeBloc(homeRepository: HomeRepository()),
               child: BlocConsumer<HomeBloc, HomeState>(
                   builder: buildForState,
-                  listener: (blocContext, blocState) {}))),
+                  listener: (blocContext, blocState) {
+                    if (blocState.navToSearch == null) {
+                    } else {
+                      if (blocState.navToSearch == true) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    SearchResult(blocState.ingredients)));
+                      }
+                    }
+                  }))),
     );
   }
 
@@ -128,21 +140,25 @@ class _HomeState extends State<Home> {
                           },
                         )),
                         GestureDetector(
-                       child: Container(
-                            padding: EdgeInsets.only(bottom: 20, left: 10),
-                            child: Icon(Icons.search_outlined,
-                                color: Colors.orange, size: 30)),
-                                onTap: (){
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                SearchResult(ingredients)));
-                                },)
+                          child: Container(
+                              padding: EdgeInsets.only(bottom: 20, left: 10),
+                              child: Icon(Icons.search_outlined,
+                                  color: Colors.orange, size: 30)),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        SearchResult(ingredients)));
+                          },
+                        )
                       ])),
               Padding(
                 padding: EdgeInsets.only(top: 20),
-                child: CameraScannerInformation(),
+                child: CameraScannerInformation((imageUrl) {
+                  BlocProvider.of<HomeBloc>(blocContext)
+                      .add(ScanIngredients(imageUrl));
+                }),
               ),
               Padding(
                 padding: EdgeInsets.only(top: 20),

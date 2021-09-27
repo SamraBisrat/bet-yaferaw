@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:bet_yaferaw/Components/HomeComponent/bloc/home_event.dart';
 import 'package:bet_yaferaw/Components/HomeComponent/bloc/home_state.dart';
 import 'package:bet_yaferaw/Model/recipe.dart';
-import 'package:bet_yaferaw/Model/user.dart';
 import 'package:bet_yaferaw/Repositories/home_repo.dart';
 import 'package:bet_yaferaw/Service/shared_pref.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,6 +17,8 @@ class HomeBloc extends Bloc<HomeEvents, HomeState> {
 
   @override
   Stream<HomeState> mapEventToState(HomeEvents event) async* {
+    // var scannedResponse;
+    // var searchResponse;
     if (event is InitializeExplore) {
       yield state.copyWith(isLoading: true);
 
@@ -43,6 +42,29 @@ class HomeBloc extends Bloc<HomeEvents, HomeState> {
       }
 
       print("profile bloc user response is \n $exploredRecipeResponse");
-    } 
+    } else if (event is ScanIngredients) {
+      List<String> ingredients = [];
+      yield state.copyWith(isLoading: true);
+      var scannedResponse =
+          await homeRepository.getScannedIngredients(event.image);
+
+      if (scannedResponse != null) {
+        for (var scanned in scannedResponse) {
+          for (var ingredient in scanned) {
+            if (ingredient is String) {
+              ingredients.add(ingredient);
+            }
+          }
+        }
+        print("string values");
+        print(ingredients);
+        yield state.copyWith(
+            isLoading: false, ingredients: ingredients, navToSearch: true);
+      } else {
+        yield state.copyWith(
+            isLoading: false,
+            exceptionError: 'could not identify image, please scan again');
+      }
+    }
   }
 }

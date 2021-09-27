@@ -24,17 +24,25 @@ class SignupBloc extends Bloc<SignUpEvent, SignupState> {
       String imageResponse =
           await userRepository.uploadProfileImage(event.imageFile);
       if (imageResponse.toString() != null) {
+        event.userData.imageid = imageResponse;
         String response = await userRepository.createUser(event.userData);
         if (response != null) {
           yield state.copyWith(
-              isLoading: false, userData: event.userData, image: imageResponse);
+              isLoading: false,
+              userData: event.userData,
+              image: imageResponse,
+              signed: true);
         } else {
           yield state.copyWith(
-              isLoading: false, exceptionError: "unable to signup");
+              isLoading: false,
+              exceptionError: "unable to signup",
+              signed: false);
         }
       } else {
         yield state.copyWith(
-            isLoading: false, exceptionError: "unable to signup");
+            isLoading: false,
+            exceptionError: "unable to signup",
+            signed: false);
       }
     }
   }

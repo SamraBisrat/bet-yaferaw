@@ -2,8 +2,11 @@ import 'package:bet_yaferaw/Components/AddRecipeComponent/add_recipe.dart';
 import 'package:bet_yaferaw/Components/HomeComponent/home.dart';
 import 'package:bet_yaferaw/Components/LoginComponent/login.dart';
 import 'package:bet_yaferaw/Components/ProfileComponent/profile.dart';
-import 'package:bet_yaferaw/Service/shared_pref.dart';
+import 'package:bet_yaferaw/ReusableComponents/bloc/bottom_nav_bloc.dart';
+import 'package:bet_yaferaw/ReusableComponents/bloc/bottom_nav_event.dart';
+import 'package:bet_yaferaw/ReusableComponents/bloc/bottom_nav_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class YRBottomNavigation extends StatefulWidget {
   const YRBottomNavigation({
@@ -15,11 +18,35 @@ class YRBottomNavigation extends StatefulWidget {
 }
 
 class _YRBottomNavigationState extends State<YRBottomNavigation> {
-  int indexSelected = 0;
-  bool tokenSaved = false;
-
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+        create: (context) => BottomNavBloc(),
+        child: BlocConsumer<BottomNavBloc, BottomNavState>(
+            builder: buildForState,
+            listener: (blocContext, blocState) async {
+              //null always a
+              // if (blocState.userData == null || blocState.userData != null) {
+              if (blocState.userData == null &&
+                  (blocState.index == 1 || blocState.index == 2) &&
+                  !blocState.isInitialStart) {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Login()));
+              } else if (blocState.index == 0 && !blocState.isInitialStart) {
+                print('This is being called');
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Home()));
+              } else if (blocState.index == 1 && !blocState.isInitialStart) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AddRecipe()));
+              } else if (blocState.index == 2 && !blocState.isInitialStart) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Profile()));
+              }
+            }));
+  }
+
+  Widget buildForState(blocContext, BottomNavState blocState) {
     return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -39,44 +66,9 @@ class _YRBottomNavigationState extends State<YRBottomNavigation> {
               selectedItemColor: Color(0xfffea04d),
               iconSize: 25,
               onTap: (int index) async {
-                String res = await SharedPref.getMyData("myData");
-
-                setState(() {
-                  indexSelected = index;
-                  if (res == null) {
-                    tokenSaved = false;
-                  } else
-                    tokenSaved = true;
-                });
-                switch (index) {
-                  case 0:
-                    {
-                      print(index);
-
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Home()));
-                    }
-                    break;
-                  case 1:
-                    {
-                      //
-                      print(index);
-                      tokenSaved == true
-                          ? Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddRecipe()))
-                          : Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => Login()));
-                    }
-                    break;
-                  case 2:
-                    {
-                      //
-                      print(index);
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Profile()));
-                    }
+                if (blocState.index != index) {
+                  BlocProvider.of<BottomNavBloc>(blocContext)
+                      .add(ChangeIndex(index));
                 }
               },
               items: <BottomNavigationBarItem>[
@@ -99,7 +91,7 @@ class _YRBottomNavigationState extends State<YRBottomNavigation> {
                   label: 'Account',
                 ),
               ],
-              currentIndex: indexSelected,
+              currentIndex: blocState.index,
               showUnselectedLabels: false,
               showSelectedLabels: false,
               type: BottomNavigationBarType.fixed,

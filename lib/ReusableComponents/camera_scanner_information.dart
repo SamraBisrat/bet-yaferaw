@@ -6,6 +6,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 class CameraScannerInformation extends StatefulWidget {
+  final Function uploadFile;
+
+  CameraScannerInformation(this.uploadFile);
+
   @override
   _CameraScannerInformationState createState() =>
       _CameraScannerInformationState();
@@ -97,8 +101,8 @@ class _CameraScannerInformationState extends State<CameraScannerInformation> {
                               fontSize: 15,
                             ),
                             recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                pickImageFromCamera(context);
+                              ..onTap = () async {
+                                widget.uploadFile(imageUrl);
                               }))),
               ])),
         ]),
