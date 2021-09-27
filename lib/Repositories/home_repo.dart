@@ -8,6 +8,6 @@ class HomeRepository {
   Future<List<RecipeData>> exploreRecipe() => _httpCalls.getExploreRecipe();
   Future<List<RecipeData>> getSearchResult(List ingredients) =>
       _httpCalls.searchRecipe(ingredients);
-  Future<List<dynamic>> getScannedIngredients(File image) =>
+  Future<List> getScannedIngredients(File image) =>
       _httpCalls.scannedIngregients(image);
 }

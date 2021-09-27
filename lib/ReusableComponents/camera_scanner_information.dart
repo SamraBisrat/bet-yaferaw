@@ -20,7 +20,7 @@ class _CameraScannerInformationState extends State<CameraScannerInformation> {
   File imageUrl;
 
   Future pickImageFromCamera(BuildContext context) async {
-    XFile image = await _picker.pickImage(source: ImageSource.camera);
+    XFile image = await _picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
       setState(() {
@@ -55,6 +55,7 @@ class _CameraScannerInformationState extends State<CameraScannerInformation> {
 
       setState(() {
         imageUrl = croppedFile;
+        widget.uploadFile(imageUrl);
       });
     }
   }
@@ -73,9 +74,7 @@ class _CameraScannerInformationState extends State<CameraScannerInformation> {
           // Container(child: imageUrl != null ? Image.file(imageUrl) : null),
           ListTile(
               leading: GestureDetector(
-                onTap: () {
-                  pickImageFromCamera(context);
-                },
+                onTap: () {},
                 child: Container(
                   height: 70,
                   width: 70,
@@ -101,8 +100,8 @@ class _CameraScannerInformationState extends State<CameraScannerInformation> {
                               fontSize: 15,
                             ),
                             recognizer: TapGestureRecognizer()
-                              ..onTap = () async {
-                                widget.uploadFile(imageUrl);
+                              ..onTap = () {
+                                pickImageFromCamera(context);
                               }))),
               ])),
         ]),

@@ -39,7 +39,7 @@ class HttpCalls {
 
   //Delete
   static const String _deleteRecipe = "/delete/recipe?recipeid=";
-  static const String _deleteUser = "/delete/user";
+  static const String _deleteUser = "/delete/user?userid=";
 
   static const String _getUsers = "/get/users";
   static const String _getRecipes = "/get/recipes";
@@ -156,6 +156,28 @@ class HttpCalls {
     });
   }
 
+  Future<int> deleteRecipe(String id) async {
+    return await http
+        .delete(Uri.parse(_baseUrl + _deleteRecipe + id),
+            headers: _getRequestHeader(token: await getToken()))
+        .then((value) async {
+      print("here");
+      print(value.statusCode);
+
+      if (value.statusCode == 200) {
+        // var response = jsonDecode(value.body);
+        print("value of body");
+        // print(response);
+        await getMyAccount();
+        return 200;
+      }
+      return value.statusCode;
+    }).catchError((onError) {
+      print(onError);
+      return -1;
+    });
+  }
+
   // static Future<int> createRecipe(
   //     RecipeData recipeData, MasterProvider masterProvider, String id) async {
   //   return await http
@@ -219,9 +241,9 @@ class HttpCalls {
     });
   }
 
-  Future<int> deleteRecipe(String id) async {
+  Future<int> deleteUser(String id) async {
     return await http
-        .delete(Uri.parse(_baseUrl + _deleteRecipe + id),
+        .delete(Uri.parse(_baseUrl + _deleteUser + id),
             headers: _getRequestHeader(token: await getToken()))
         .then((value) async {
       print("here");
@@ -231,7 +253,7 @@ class HttpCalls {
         // var response = jsonDecode(value.body);
         print("value of body");
         // print(response);
-        await getMyAccount();
+
         return 200;
       }
       return value.statusCode;
@@ -413,8 +435,9 @@ class HttpCalls {
     });
   }
 
-  Future<dynamic> scannedIngregients(File image) async {
+  Future<List> scannedIngregients(File image) async {
     // final response;
+    var res;
     var uri = Uri.parse(_predictionUrl);
     final request = http.MultipartRequest('POST', uri);
     final file = await http.MultipartFile.fromPath('file', image.path);
@@ -422,15 +445,20 @@ class HttpCalls {
     try {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
-      if (response.statusCode != 200 || response.statusCode != 204) {
+      if (response.statusCode == 200 || response.statusCode == 204) {
         print("image post  ${response.statusCode}");
-        return null;
+        res = jsonDecode(response.body);
+        print(res);
+        print("imageScanner");
+
+        return res;
       }
+
       print("imageScanner");
-      print(response);
-      return response;
+      return res;
     } catch (error) {
       print(error);
+      return null;
     }
   }
 
