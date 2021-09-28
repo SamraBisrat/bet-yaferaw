@@ -124,7 +124,8 @@ class _SignupState extends State<Signup> {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => Login()));
                       } else {
-                        YRSnackBar(errorMessage: blocState.exceptionError);
+                        YRSnackBar(errorMessage: blocState.exceptionError)
+                            .showSnachkBar(context);
                       }
                     }
                   }))),
@@ -251,7 +252,11 @@ class _SignupState extends State<Signup> {
                   ),
                   SizedBox(height: 50.0),
                   blocState.isLoading
-                      ? CircularProgressIndicator()
+                      ? Center(
+                          child: SizedBox(
+                              height: 30,
+                              width: 30,
+                              child: CircularProgressIndicator()))
                       : ElevatedButton(
                           child: Text(
                             "Signup",

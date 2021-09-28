@@ -28,21 +28,6 @@ class LoginState extends Equatable {
         password: password ?? this.password,
         isLoading: isLoading ?? this.isLoading,
         exceptionError: exceptionError ?? this.exceptionError,
-        tokenSaved: tokenSaved ?? null);
+        tokenSaved: tokenSaved ?? this.tokenSaved);
   }
 }
-
-  
-
-  // const LoginState({this.isLoading = false, this.email, this.password, this.error});
-
-
-  // LoginState copyWith({bool isLoading, String email, String password, String error}) {
-  //   return LoginState(
-  //       isLoading: isLoading ?? this.isLoading,
-  //       email: email ?? this.email,
-  //       password: password ?? this.password,
-  //       error: error ?? null);
-  // }
-
-

@@ -30,7 +30,7 @@ class HomeBloc extends Bloc<HomeEvents, HomeState> {
       } else {
         yield state.copyWith(
             isLoading: false,
-            exploredRecipe: null,
+            exploredRecipe: exploredRecipeResponse,
             exceptionError: "Unable to get recipe");
       }
       print("profile bloc user response is \n $exploredRecipeResponse");

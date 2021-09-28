@@ -1,17 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:bet_yaferaw/Components/LoginComponent/bloc/login_event.dart';
-import 'package:bet_yaferaw/Components/LoginComponent/bloc/login_state.dart';
 import 'package:bet_yaferaw/Model/recipe.dart';
 import 'package:bet_yaferaw/Model/user.dart';
-import 'package:bet_yaferaw/Provider/MasterProvider.dart';
 import 'package:bet_yaferaw/Service/shared_pref.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:path/path.dart' as p;
 
 class HttpCalls {
@@ -178,28 +173,6 @@ class HttpCalls {
     });
   }
 
-  // static Future<int> createRecipe(
-  //     RecipeData recipeData, MasterProvider masterProvider, String id) async {
-  //   return await http
-  //       .post(Uri.parse(_baseUrl + _createRecipe + id),
-  //           headers: _getRequestHeader(token: masterProvider.getToken),
-  //           body: jsonEncode(recipeData.toJson()))
-  //       .then((value) async {
-  //     print(value.statusCode);
-  //     if (value.statusCode == 200) {
-  //       var response = jsonDecode(value.body);
-  //       recipeData = RecipeData.fromJson(response);
-  //       masterProvider.setRecipeData = recipeData;
-
-  //     }
-
-  //     return value.statusCode;
-  //   }).catchError((onError) {
-  //     handleOnError(onError, masterProvider);
-  //     print(onError);
-  //     return -1;
-  //   });
-  // }
   Future<String> createRecipe(RecipeData recipeData) async {
     return await http
         .post(Uri.parse(_baseUrl + _createRecipe),
@@ -326,7 +299,7 @@ class HttpCalls {
 
         return recipeDatas;
       }
-      return null;
+      return recipeDatas;
     }).catchError((onError) {
       // handleOnError(onError);
       print(onError);
@@ -348,31 +321,37 @@ class HttpCalls {
         print(exploredRecipes);
         return exploredRecipes;
       }
-      return null;
+      return exploredRecipes;
     }).catchError((onError) {
       // handleOnError(onError);
       print(onError);
       return null;
     });
   }
-  // static Future<int> getUsers(
-  //     UserData userData, MasterProvider masterProvider) async {
-  //   return await http
-  //       .get(Uri.parse(_baseUrl + _getUsers),
-  //           headers: _getRequestHeader(token: masterProvider.getToken))
-  //       .then((value) async {
-  //     if (value.statusCode == 200) {
-  //       var response = jsonDecode(value.body);
-  //       userData = UserData.fromJson(response);
-  //       masterProvider.setUserdata = userData;
-  //     }
-  //     return value.statusCode;
-  //   }).catchError((onError) {
-  //     handleOnError(onError, masterProvider);
-  //     print(onError);
-  //     return -1;
-  //   });
-  // }
+
+  Future<List<UserData>> getUsers() async {
+    List<UserData> users = [];
+    return await http
+        .get(Uri.parse(_baseUrl + _getUsers),
+            headers: _getRequestHeader(token: await getToken()))
+        .then((value) async {
+      print(value.statusCode);
+      print("inseide http getusers");
+
+      if (value.statusCode == 200) {
+        var response = jsonDecode(value.body);
+        for (var user in response) {
+          users.add(UserData.fromJson(user));
+        }
+        return users;
+      }
+      print("inseide http getusers");
+      return users;
+    }).catchError((onError) {
+      print(onError);
+      return null;
+    });
+  }
 
   // static Future<int> getRecipes(
   //     RecipeData recipeData, MasterProvider masterProvider) async {
@@ -408,7 +387,7 @@ class HttpCalls {
         return myRecipes;
       }
 
-      return null;
+      return myRecipes;
     }).catchError((onError) {
       print(onError);
       return null;
@@ -428,7 +407,7 @@ class HttpCalls {
         }
         return savedRecipes;
       }
-      return null;
+      return savedRecipes;
     }).catchError((onError) {
       print(onError);
       return null;

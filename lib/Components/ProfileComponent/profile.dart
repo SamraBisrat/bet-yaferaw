@@ -8,6 +8,7 @@ import 'package:bet_yaferaw/Repositories/profile_repo.dart';
 import 'package:bet_yaferaw/ReusableComponents/bottom_navigation.dart';
 import 'package:bet_yaferaw/ReusableComponents/recipe_short_description.dart';
 import 'package:bet_yaferaw/ReusableComponents/snack_bar.dart';
+import 'package:bet_yaferaw/Service/shared_pref.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -93,12 +94,24 @@ class _ProfileState extends State<Profile> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              CircleAvatar(
-                                radius: 75.0,
-                                backgroundImage: AssetImage(
-                                    "assets/images/sample_profile.jpeg"),
-                                backgroundColor: Colors.transparent,
-                              ),
+                              blocState.userData.imageid == null
+                                  ? CircleAvatar(
+                                      radius: 75.0,
+                                      foregroundColor: Colors.orange,
+                                      backgroundColor: Colors.white,
+                                      child: Text(
+                                        blocState.userData.firstname
+                                            .substring(0, 1)
+                                            .toUpperCase(),
+                                        style: TextStyle(fontSize: 50),
+                                      ),
+                                    )
+                                  : CircleAvatar(
+                                      radius: 75.0,
+                                      backgroundImage: NetworkImage(
+                                          blocState.userData.imageid),
+                                      backgroundColor: Colors.transparent,
+                                    ),
                               SizedBox(height: 20),
                               Text(
                                 "${blocState.userData.firstname} ${blocState.userData.lastname}",
@@ -137,24 +150,44 @@ class _ProfileState extends State<Profile> {
                         ],
                       ),
                     ),
-                    AppBar(
-                      automaticallyImplyLeading: false,
-                      backgroundColor: Colors.transparent,
-                      elevation: 0.0,
-                      actions: <Widget>[
-                        PopupMenuButton<String>(
-                          onSelected: choiceAction,
-                          itemBuilder: (BuildContext context) {
-                            return {'Settings', 'Logout'}.map((String choice) {
-                              return PopupMenuItem<String>(
-                                value: choice,
-                                child: Text(choice),
-                              );
-                            }).toList();
-                          },
-                        ),
-                      ],
-                    ),
+                    blocState.userData.role == "AA00BET"
+                        ? AppBar(
+                            automaticallyImplyLeading: false,
+                            backgroundColor: Colors.transparent,
+                            elevation: 0.0,
+                            actions: <Widget>[
+                              PopupMenuButton<String>(
+                                onSelected: choiceAction,
+                                itemBuilder: (BuildContext context) {
+                                  return {'Settings', 'Logout'}
+                                      .map((String choice) {
+                                    return PopupMenuItem<String>(
+                                      value: choice,
+                                      child: Text(choice),
+                                    );
+                                  }).toList();
+                                },
+                              ),
+                            ],
+                          )
+                        : AppBar(
+                            automaticallyImplyLeading: false,
+                            backgroundColor: Colors.transparent,
+                            elevation: 0.0,
+                            actions: <Widget>[
+                              PopupMenuButton<String>(
+                                onSelected: choiceAction,
+                                itemBuilder: (BuildContext context) {
+                                  return {'Logout'}.map((String choice) {
+                                    return PopupMenuItem<String>(
+                                      value: choice,
+                                      child: Text(choice),
+                                    );
+                                  }).toList();
+                                },
+                              ),
+                            ],
+                          )
                   ]),
                   Container(
                     height: height,
@@ -234,8 +267,7 @@ class _ProfileState extends State<Profile> {
                                                 blocState.myRecipes.map((e) {
                                               return GestureDetector(
                                                 child: RecipeShortDescription(
-                                                    image:
-                                                        "assets/images/sample_food.jpeg",
+                                                    image: e.imageid,
                                                     recipeName: e.recipename,
                                                     liked: e.usersliked == null
                                                         ? false
@@ -278,8 +310,7 @@ class _ProfileState extends State<Profile> {
                                                 .map((e) {
                                               return GestureDetector(
                                                 child: RecipeShortDescription(
-                                                    image:
-                                                        "assets/images/sample_food.jpeg",
+                                                    image: e.imageid,
                                                     recipeName: e.recipename,
                                                     liked: e.usersliked == null
                                                         ? false
@@ -328,6 +359,7 @@ class _ProfileState extends State<Profile> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Settings()));
     } else if (value == "Logout") {
+      SharedPref.storeToken(" ");
       Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
     }
   }

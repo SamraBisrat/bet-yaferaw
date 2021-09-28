@@ -35,6 +35,6 @@ class SignupState extends Equatable {
         exceptionError: exceptionError ?? this.exceptionError,
         image: image ?? this.image,
         imageFile: imageFile ?? this.imageFile,
-        signed: signed ?? this.signed);
+        signed: signed ?? false);
   }
 }
