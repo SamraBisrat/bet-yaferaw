@@ -384,11 +384,13 @@ class _AddRecipeState extends State<AddRecipe> {
                                   RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8)))),
                       onPressed: () {
-                        print('Sunmit');
+                        print('Submit token');
+                        print(blocState.userData.id);
+                        // print(blocState.userData);
+                        print('b');
                         BlocProvider.of<AddRecipeBloc>(blocContext).add(
                             AddRecipeButtonPressed(
                                 recipeData: RecipeData(
-                                    userid: blocState.userData.id,
                                     ingredients: uiIngredients,
                                     recipename: titleController.text,
                                     categories: category,

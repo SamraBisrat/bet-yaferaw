@@ -76,8 +76,7 @@ class _SearchResultState extends State<SearchResult> {
                                 children: blocState.recipeData.map((e) {
                                   return GestureDetector(
                                       child: RecipeShortDescription(
-                                          image:
-                                              "assets/images/sample_food.jpeg",
+                                          image: e.imageid,
                                           recipeName: e.recipename,
                                           liked: false,
                                           likes: e.usersliked == null

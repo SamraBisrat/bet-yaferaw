@@ -17,13 +17,13 @@ class HomeBloc extends Bloc<HomeEvents, HomeState> {
 
   @override
   Stream<HomeState> mapEventToState(HomeEvents event) async* {
+    List<RecipeData> exploredRecipeResponse;
     if (event is InitializeExplore) {
       yield state.copyWith(isLoading: true);
       String userData = await SharedPref.getMyData("userData");
       print("user data from shared pref");
       print(userData);
-      List<RecipeData> exploredRecipeResponse =
-          await homeRepository.exploreRecipe();
+      exploredRecipeResponse = await homeRepository.exploreRecipe();
       if (exploredRecipeResponse != null) {
         yield state.copyWith(
             isLoading: false, exploredRecipe: exploredRecipeResponse);
@@ -55,6 +55,7 @@ class HomeBloc extends Bloc<HomeEvents, HomeState> {
             isLoading: false, ingredients: ingredients, navToSearch: true);
       } else {
         yield state.copyWith(
+            exploredRecipe: exploredRecipeResponse,
             isLoading: false,
             exceptionError: 'could not identify image, please scan again');
       }

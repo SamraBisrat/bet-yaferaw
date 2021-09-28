@@ -183,6 +183,8 @@ class HttpCalls {
       if (value.statusCode == 200) {
         var response = jsonDecode(value.body);
         print(response);
+        print("inside create recipe");
+        print(await getToken());
         return response;
       }
       return null;
@@ -258,6 +260,7 @@ class HttpCalls {
   }
 
   Future<UserData> getMyAccount() async {
+    UserData userData;
     return await http
         .get(Uri.parse(_baseUrl + _myAccount),
             headers: _getRequestHeader(token: await getToken()))
@@ -268,7 +271,7 @@ class HttpCalls {
       print(value.statusCode);
       if (value.statusCode == 200) {
         var response = jsonDecode(value.body);
-        UserData userData = UserData.fromJson(response);
+        userData = UserData.fromJson(response);
         // masterProvider.setUserdata = userData;
         await SharedPref.storeMyData(
             "userData", json.encode(userData.toJson()));
@@ -276,7 +279,7 @@ class HttpCalls {
 
         return userData;
       }
-      return null;
+      return userData;
     }).catchError((onError) {
       // handleOnError(onError, masterProvider);
       print(onError);

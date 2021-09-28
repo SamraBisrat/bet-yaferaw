@@ -44,7 +44,7 @@ class _RecipeShortDescriptionState extends State<RecipeShortDescription> {
                   )
                 : Image.network(
                     widget.image,
-                    fit: BoxFit.fitWidth,
+                    fit: BoxFit.contain,
                   ),
             Align(
                 alignment: Alignment.bottomCenter,
