@@ -40,7 +40,8 @@ class BottomNavBloc extends Bloc<BottomNavEvent, BottomNavState> {
         yield state.copyWith(userData: null);
       }
     } else if (event is ChangeIndex) {
-      yield state.copyWith(index: event.index, isInitialStart: false);
+      yield state.copyWith(
+          index: event.index, isInitialStart: false, userData: user);
     }
   }
 }

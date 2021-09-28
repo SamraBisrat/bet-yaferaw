@@ -40,7 +40,10 @@ class _LoginState extends State<Login> {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => Home()));
                       } else if (blocState.tokenSaved == false) {
-                        YRSnackBar(errorMessage: blocState.exceptionError);
+                        YRSnackBar(
+                                errorMessage:
+                                    'Unable tp login, user your correct credentials')
+                            .showSnachkBar(context);
                       } else {}
                     }
                   }))),

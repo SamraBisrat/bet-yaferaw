@@ -20,7 +20,7 @@ class _CameraScannerInformationState extends State<CameraScannerInformation> {
   File imageUrl;
 
   Future pickImageFromCamera(BuildContext context) async {
-    XFile image = await _picker.pickImage(source: ImageSource.gallery);
+    XFile image = await _picker.pickImage(source: ImageSource.camera);
 
     if (image != null) {
       setState(() {

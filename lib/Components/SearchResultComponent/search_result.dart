@@ -1,12 +1,9 @@
 import 'dart:async';
-
 import 'package:bet_yaferaw/Components/RecipeDetailComponent/recipe_detail.dart';
 import 'package:bet_yaferaw/Components/SearchResultComponent/bloc/search_bloc.dart';
 import 'package:bet_yaferaw/Components/SearchResultComponent/bloc/search_state.dart';
-import 'package:bet_yaferaw/Repositories/search_repo.dart';
 import 'package:bet_yaferaw/ReusableComponents/bottom_navigation.dart';
 import 'package:bet_yaferaw/ReusableComponents/recipe_short_description.dart';
-import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -79,8 +76,7 @@ class _SearchResultState extends State<SearchResult> {
                                 children: blocState.recipeData.map((e) {
                                   return GestureDetector(
                                       child: RecipeShortDescription(
-                                          image:
-                                              "assets/images/sample_food.jpeg",
+                                          image: e.imageid,
                                           recipeName: e.recipename,
                                           liked: false,
                                           likes: e.usersliked == null

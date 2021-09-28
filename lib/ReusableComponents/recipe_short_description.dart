@@ -36,11 +36,16 @@ class _RecipeShortDescriptionState extends State<RecipeShortDescription> {
       child: ClipRRect(
           borderRadius: BorderRadius.circular(10.0),
           child: Stack(fit: StackFit.loose, children: [
-            Image.asset(
-              widget.image,
-              fit: BoxFit.fitWidth,
-              width: width,
-            ),
+            widget.image == null
+                ? Image.asset(
+                    "assets/images/sample_food.jpeg",
+                    fit: BoxFit.fitWidth,
+                    width: width,
+                  )
+                : Image.network(
+                    widget.image,
+                    fit: BoxFit.contain,
+                  ),
             Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(

@@ -55,5 +55,6 @@ class UserData {
         "totallikes": totallikes,
         "recipescreated": recipescreated,
         "savedrecipes": savedrecipes,
+        "roles": role
       };
 }

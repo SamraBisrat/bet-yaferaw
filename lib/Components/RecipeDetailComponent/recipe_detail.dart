@@ -1,15 +1,9 @@
 import 'dart:ui';
-
-// import 'package:bet_yaferaw/Provider/MasterProvider.dart';
-import 'package:bet_yaferaw/Components/HomeComponent/bloc/home_bloc.dart';
-import 'package:bet_yaferaw/Components/HomeComponent/bloc/home_event.dart';
 import 'package:bet_yaferaw/Components/HomeComponent/home.dart';
 import 'package:bet_yaferaw/Components/RecipeDetailComponent/bloc/recipe_detail_bloc.dart';
 import 'package:bet_yaferaw/Components/RecipeDetailComponent/bloc/recipe_detail_event.dart';
 import 'package:bet_yaferaw/Components/RecipeDetailComponent/bloc/recipe_detail_state.dart';
-import 'package:bet_yaferaw/Model/recipe.dart';
 import 'package:bet_yaferaw/Model/user.dart';
-import 'package:bet_yaferaw/Repositories/recipe_detail_repo.dart';
 import 'package:bet_yaferaw/ReusableComponents/snack_bar.dart';
 import 'package:bet_yaferaw/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +39,13 @@ class _RecipeDetailState extends State<RecipeDetail> {
                       //   done = false;
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => Home()));
+                          if(blocState.deleted == true){
+                              Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Home()));
+                          }
+                          else{
+
+                          }
                     }
                   }))),
     );
@@ -71,9 +72,11 @@ class _RecipeDetailState extends State<RecipeDetail> {
             Container(
                 color: Colors.orange,
                 width: width,
-                child: Image(
+                
+                child: blocState.recipeData.imageid == null? Image(
                     image: AssetImage("assets/images/sample_food.jpeg"),
-                    fit: BoxFit.cover)),
+                    fit: BoxFit.cover):
+                    Image.network(blocState.recipeData.imageid, fit: BoxFit.cover)),
             Container(
               color: Color(0xffF6F5F5),
               padding: EdgeInsets.all(20),
@@ -129,7 +132,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
                                   //PUT POP UP MESSAGE HERE THAT SAYS LOGIN TO ENGAGE WITH RECIPES
                                   YRSnackBar(
                                       errorMessage:
-                                          "Already engaged with this recipe").showSnachkBar(context);
+                                          "Login to engage with recipes").showSnachkBar(context);
                                   print(newUserLike);
                                 }
                                 if (blocState.userData != null) {
@@ -230,7 +233,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
                             child: (blocState.recipeData != null &&
                                         blocState.userData != null) &&
                                     (blocState.recipeData.userid ==
-                                        blocState.userData.id)
+                                        blocState.userData.id && blocState.userData.role == 'AA00BET')
                                 ? Icon(
                                     Icons.delete_forever,
                                     color: Color(0xffFD6637),

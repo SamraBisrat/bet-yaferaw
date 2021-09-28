@@ -190,7 +190,7 @@ class _HomeState extends State<Home> {
                             children: blocState.exploredRecipe.map((e) {
                               return GestureDetector(
                                   child: RecipeShortDescription(
-                                      image: "assets/images/sample_food.jpeg",
+                                      image: e.imageid,
                                       recipeName: e.recipename,
                                       liked: false,
                                       likes: e.usersliked == null

@@ -1,5 +1,8 @@
 import 'package:bet_yaferaw/Components/AddRecipeComponent/bloc/add_recipe_bloc.dart';
+import 'package:bet_yaferaw/Components/AddRecipeComponent/bloc/add_recipe_event.dart';
 import 'package:bet_yaferaw/Components/AddRecipeComponent/bloc/add_recipe_state.dart';
+import 'package:bet_yaferaw/Components/HomeComponent/home.dart';
+import 'package:bet_yaferaw/Model/recipe.dart';
 import 'package:bet_yaferaw/Repositories/add_recipe_repo.dart';
 import 'package:bet_yaferaw/ReusableComponents/bottom_navigation.dart';
 import 'package:bet_yaferaw/ReusableComponents/snack_bar.dart';
@@ -102,14 +105,15 @@ class _AddRecipeState extends State<AddRecipe> {
         });
   }
 
-  List<Ingredients> ingredients = [];
-  List<Ingredients> uiIngredients = [];
+  List ingredients = [];
+  List uiIngredients = [];
+  List<String> category = [];
 
   String categoryController;
   String cookingController;
   String servingController;
-  TextEditingController titleController;
-  TextEditingController descriptionController;
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +125,18 @@ class _AddRecipeState extends State<AddRecipe> {
               child: BlocConsumer<AddRecipeBloc, AddRecipeState>(
                   builder: buildForState,
                   listener: (blocContext, blocState) {
-                    
+                    if (blocState.created == null) {
+                    } else {
+                      if (blocState.created == true) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Home()));
+                      } else {
+                        YRSnackBar(
+                                errorMessage:
+                                    "Unable to create Recipe, please try again")
+                            .showSnachkBar(context);
+                      }
+                    }
                   }))),
     );
   }
@@ -139,13 +154,16 @@ class _AddRecipeState extends State<AddRecipe> {
                 child: Column(children: [
               Stack(alignment: Alignment.center, children: [
                 Container(
-                  height: screenHeight / 2.5,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image:
-                              AssetImage("assets/images/post_background.jpg"),
-                          fit: BoxFit.fitWidth)),
-                ),
+                    child: imageUrl == null
+                        ? Container(
+                            height: screenHeight / 2.5,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage(
+                                        "assets/images/post_background.jpg"),
+                                    fit: BoxFit.fitWidth)),
+                          )
+                        : Image.file(imageUrl)),
                 Align(
                   alignment: Alignment.center,
                   child: Container(
@@ -201,6 +219,7 @@ class _AddRecipeState extends State<AddRecipe> {
                                   InputDecoration.collapsed(hintText: ""),
                               value: categoryController,
                               onChanged: (String newValue) {
+                                category.add(categoryController);
                                 categoryController = newValue;
                               },
                               items: <String>[
@@ -320,7 +339,7 @@ class _AddRecipeState extends State<AddRecipe> {
                     isDense: true,
                     alignLabelWithHint: true,
                     border: UnderlineInputBorder(),
-                    labelText: 'Description',
+                    labelText: 'Direction',
                     labelStyle: TextStyle(color: Color(0xffFD6637))),
               ),
               Divider(
@@ -345,8 +364,42 @@ class _AddRecipeState extends State<AddRecipe> {
                           addIngredients(context),
                     ),
                   )),
-              getIngredientList()
-            ]))
+              getIngredientList(),
+              SizedBox(height: 50.0),
+              blocState.isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
+                      child: Text(
+                        "Submit",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      style: ButtonStyle(
+                          padding: MaterialStateProperty.all<EdgeInsets>(
+                              EdgeInsets.all(20)),
+                          alignment: Alignment.center,
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              AppTheme.buttonSecondary),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)))),
+                      onPressed: () {
+                        print('Submit token');
+                        print(blocState.userData.id);
+                        // print(blocState.userData);
+                        print('b');
+                        BlocProvider.of<AddRecipeBloc>(blocContext).add(
+                            AddRecipeButtonPressed(
+                                recipeData: RecipeData(
+                                    ingredients: uiIngredients,
+                                    recipename: titleController.text,
+                                    categories: category,
+                                    directions: descriptionController.text,
+                                    serves: int.tryParse(servingController),
+                                    cookingtime: cookingController),
+                                image: imageUrl));
+                      })
+            ])),
           ])),
     );
   }
@@ -392,7 +445,7 @@ class _AddRecipeState extends State<AddRecipe> {
                     ingredients.remove(tag);
                   },
                   onTag: (tag) {
-                    if ((ingredients.singleWhere((it) => it.ingredient == tag,
+                    if ((ingredients.singleWhere((it) => it == tag,
                             orElse: () => null)) !=
                         null) {
                       YRSnackBar(
@@ -401,7 +454,7 @@ class _AddRecipeState extends State<AddRecipe> {
                                   "Please enter a different ingredient.")
                           .showSnachkBar(context);
                     } else {
-                      ingredients.add(Ingredients(ingredient: tag));
+                      ingredients.add(tag);
                     }
                   }),
             )),
@@ -444,21 +497,16 @@ class _AddRecipeState extends State<AddRecipe> {
                       style: BorderStyle.solid, color: Color(0xff0BCE83)),
                   borderRadius: BorderRadius.circular(12.0)),
               contentPadding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
-              leading: Text(uiIngredients[index].ingredient.toString()),
+              leading: Text(uiIngredients[index].toString()),
               trailing: IconButton(
                 icon: Icon(Icons.close, size: 16, color: AppTheme.primaryColor),
                 onPressed: () {
                   setState(() {
-                    uiIngredients.removeWhere((element) =>
-                        element.ingredient == uiIngredients[index].ingredient);
+                    uiIngredients.removeWhere(
+                        (element) => element == uiIngredients[index]);
                   });
                 },
               ));
         });
   }
-}
-
-class Ingredients {
-  Ingredients({this.ingredient});
-  String ingredient;
 }
