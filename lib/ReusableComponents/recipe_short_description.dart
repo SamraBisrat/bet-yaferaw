@@ -51,67 +51,74 @@ class _RecipeShortDescriptionState extends State<RecipeShortDescription> {
                           topLeft: Radius.circular(12),
                           topRight: Radius.circular(12))),
                   height: height / 8,
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                widget.recipeName == null
-                                    ? ""
-                                    : widget.recipeName,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: AppTheme.fontName,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                            Column(children: [
-                              Icon(
-                                widget.liked
-                                    ? Icons.favorite
-                                    : Icons.favorite_outline_sharp,
-                                color: Color(0xffFD6637),
-                              ),
-                              Text(
-                                widget.likes.toString(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              )
-                            ]),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
                                 child: Text(
-                              "${widget.cookTime} hours",
-                              style: TextStyle(
-                                color: Colors.white,
+                                  widget.recipeName == null
+                                      ? ""
+                                      : widget.recipeName,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: AppTheme.fontName,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ),
-                            )),
-                            Container(
-                                height: 12,
-                                child: VerticalDivider(
-                                  thickness: 2,
+                              // Column(children: [
+                              //   Icon(
+                              //     widget.liked
+                              //         ? Icons.favorite
+                              //         : Icons.favorite_outline_sharp,
+                              //     color: Color(0xffFD6637),
+                              //   ),
+                              //   Text(
+                              //     widget.likes.toString(),
+                              //     style: TextStyle(
+                              //       color: Colors.white,
+                              //     ),
+                              //   )
+                              // ]),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                  child: Text(
+                                "${widget.cookTime}",
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
                                   color: Colors.white,
-                                )),
-                            Text(
-                              "${widget.serving} Servings",
-                              style: TextStyle(
-                                color: Colors.white,
+                                ),
+                              )),
+                              Container(
+                                  height: 12,
+                                  child: VerticalDivider(
+                                    thickness: 2,
+                                    color: Colors.white,
+                                  )),
+                              Flexible(
+                                flex: 2,
+                                child: Text(
+                                  "${widget.serving} Servings",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ],
-                        )
-                      ]),
+                            ],
+                          )
+                        ]),
+                  ),
                 ))
           ])),
     );
